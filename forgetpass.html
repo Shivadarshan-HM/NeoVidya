@@ -184,7 +184,7 @@ h2{margin:0;font-family:var(--font-display);font-size:22px}
     if(np1.value!==np2.value) return smsg.textContent='Passwords do not match';
     if(np1.value.length<4) return smsg.textContent='Too short';
     const map=users();map[currentKey].pass=np1.value;saveUsers(map);
-    toast('Password changed!');setTimeout(()=>location.href='index.html',800);
+    toast('Password changed!');setTimeout(()=>location.href='dash1.html',800);
   };
 })();
 </script>

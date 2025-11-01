@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NeoVidya – Profile</title>
+<meta name="description" content="NeoVidya learner profile: view and edit your name, school, grade, email, and progress." />
+<meta name="theme-color" content="#0F4C81" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+    --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+    --fg-dark:#E9F2FF; --bg-dark:#020817; --fg-light:#0C1220; --bg-light:#EAF5FF;
+    --glass: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    --shadow-lg:0 12px 32px rgba(7,26,46,.35); --shadow-sm:0 6px 16px rgba(7,26,46,.2);
+    --radius-2xl:28px; --radius-lg:16px;
+    --font-display:"Poppins",system-ui; --font-body:"Nunito",system-ui;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-body);line-height:1.5;min-height:100svh;transition:background .3s,color .3s}
+  body.theme-dark{background:radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%);color:var(--fg-dark)}
+  body.theme-light{background:var(--bg-light);color:var(--fg-light)}
+  .wrap{max-width:980px;margin:auto;padding:clamp(12px,2.6vw,24px);display:grid;gap:16px}
+  .glass{background:var(--glass);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(6px)}
+  body.theme-light .glass{background:#fff;border-color:rgba(0,0,0,.08)}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:40px;height:40px;border-radius:10px;background:conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500));box-shadow:inset 0 0 0 3px rgba(255,255,255,.25),0 6px 16px rgba(0,0,0,.25)}
+  h1{font-family:var(--font-display);font-size:22px;margin:0}
+  .button{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:0;cursor:pointer;border-radius:12px;font-weight:800}
+  .ghost{background:rgba(255,255,255,.06);color:inherit}
+  body.theme-light .ghost{background:#f0f4ff}
+  .primary{background:linear-gradient(180deg, var(--nv-yellow-500), #D99C00);color:#1A1A1A;box-shadow:var(--shadow-sm)}
+  .chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);font-weight:800}
+  body.theme-light .chip{background:#eef6ff;border-color:#d7e7ff;color:#0B3A63}
+  .grid{display:grid;grid-template-columns: 1fr; gap:16px}
+
+  .card{border-radius:var(--radius-2xl);box-shadow:var(--shadow-lg);padding:16px}
+
+  .profile{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+  .avatar{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;
+    font-family:var(--font-display);font-weight:800;font-size:28px;color:#0c1220}
+  .profile .title{font-family:var(--font-display);font-size:20px;margin:0}
+  .muted{opacity:.9}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+  .list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+  .item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)}
+  body.theme-light .item{background:#f8fbff;border-color:#e6eefc}
+  .label{opacity:.85}
+  .value{font-weight:800}
+
+  .modal-back{position:fixed;inset:0;background:rgba(2,8,23,.6);display:grid;place-items:center;z-index:9999}
+  .modal{width:min(520px,96%);background:var(--glass);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:16px;box-shadow:var(--shadow-lg)}
+  .field{display:grid;gap:6px;margin-bottom:10px}
+  label{font-size:13px;opacity:.9}
+  input, select{padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:inherit;outline:none}
+  body.theme-light input, body.theme-light select{background:#f5f8ff;border-color:#d7e7ff;color:#0C1220}
+  .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+
+  #__toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);padding:10px 14px;border-radius:12px;display:none;z-index:9999;
+    background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(6px);
+    box-shadow:0 10px 24px rgba(0,0,0,.25)}
+</style>
+</head>
+<body class="theme-dark">
+  <div class="wrap">
+    <header>
+      <div class="brand" aria-label="NeoVidya brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div><h1>NeoVidya</h1><div class="chip">Profile</div></div>
+      </div>
+      <div class="row">
+        <button id="themeToggle" class="button ghost" type="button" aria-pressed="false" aria-label="Toggle theme">🌙 Dark</button>
+        <a href="neovidyadashboard.html" class="button ghost" aria-label="Back to dashboard">⬅ Dashboard</a>
+      </div>
+    </header>
+
+    <section class="grid">
+      <!-- Profile summary -->
+      <article class="card glass" aria-label="Profile summary">
+        <div class="profile">
+          <div id="avatar" class="avatar" aria-hidden="true">NV</div>
+          <div>
+            <h2 id="pName" class="title">Student</h2>
+            <div class="row muted" style="font-size:13px">
+              <span id="pRole" class="chip">Student</span>
+              <span class="chip">XP: <span id="pXP">0</span></span>
+              <span class="chip">Streak: <span id="pStreak">0</span> days</span>
+            </div>
+          </div>
+          <div class="row">
+            <button id="editBtn" class="button primary" type="button">✏ Edit</button>
+            <button id="signOut" class="button ghost" type="button">🚪 Sign out</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Details -->
+      <article class="card glass" aria-label="Profile details">
+        <h3 style="margin:0 0 8px;font-family:var(--font-display)">Details</h3>
+        <ul class="list">
+          <li class="item"><span class="label">School</span><span id="pSchool" class="value">—</span></li>
+          <li class="item" id="gradeRow"><span class="label">Grade</span><span id="pGrade" class="value">—</span></li>
+          <li class="item"><span class="label">Email</span><span id="pEmail" class="value">—</span></li>
+          <li class="item"><span class="label">Role</span><span id="pRole2" class="value">Student</span></li>
+          <li class="item"><span class="label">Last Active</span><span id="pLast" class="value">Today</span></li>
+        </ul>
+        <div class="row" style="margin-top:10px">
+          <button id="resetProgress" class="button ghost" type="button">↺ Reset progress (XP 0)</button>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <!-- Modal root -->
+  <div id="modalRoot" aria-live="polite"></div>
+  <div id="__toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  // ----- THEME -----
+  const themeBtn = document.getElementById('themeToggle');
+  const pref = localStorage.getItem('nv-theme') || 'dark';
+  setTheme(pref);
+  themeBtn.addEventListener('click', ()=> setTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark'));
+  function setTheme(mode){
+    const dark = mode === 'dark';
+    document.body.classList.toggle('theme-dark', dark);
+    document.body.classList.toggle('theme-light', !dark);
+    themeBtn.textContent = dark ? '🌙 Dark' : '☀ Light';
+    themeBtn.setAttribute('aria-pressed', String(dark));
+    localStorage.setItem('nv-theme', mode);
+  }
+
+  // ----- PROFILE STATE -----
+  const profile = {
+    name:  (localStorage.getItem('nv-name')   || 'Student').trim(),
+    school:(localStorage.getItem('nv-school') || '—').trim() || '—',
+    grade: (localStorage.getItem('nv-grade')  || '—').trim() || '—',
+    email: (localStorage.getItem('nv-email')  || '—').trim() || '—',
+    role:  (localStorage.getItem('nv-role')   || 'student').trim() || 'student',
+    xp:    parseInt(localStorage.getItem('nv-xp')||'0',10) || 0,
+    streak:parseInt(localStorage.getItem('nv-streak')||'0',10) || 0,
+    last:  (localStorage.getItem('nv-last')   || 'Today').trim() || 'Today'
+  };
+
+  // Stable avatar background based on name
+  function colorFromName(name){
+    let h=0; for(let i=0;i<name.length;i++){ h = (h*31 + name.charCodeAt(i)) >>> 0; }
+    const hue = h % 360;
+    // FIX: return a proper CSS string using template literals
+    return `linear-gradient(135deg, hsl(${hue} 85% 75%), hsl(${(hue+40)%360} 80% 70%))`;
+  }
+  function initials(name){
+    const parts = String(name).trim().split(/\s+/).slice(0,2);
+    return parts.map(p=>p[0]?.toUpperCase()||'').join('') || 'NV';
+  }
+  function setText(id, val){ const el = document.getElementById(id); if(el){ el.textContent = String(val || '—'); } }
+
+  function paint(){
+    setText('pName', profile.name);
+    setText('pRole', cap(profile.role));
+    setText('pRole2', cap(profile.role));
+    setText('pSchool', profile.school);
+    setText('pEmail', profile.email);
+    setText('pXP', profile.xp);
+    setText('pStreak', profile.streak);
+    setText('pLast', profile.last);
+    const gradeRow = document.getElementById('gradeRow');
+    if(profile.role === 'student'){
+      gradeRow.style.display = '';
+      setText('pGrade', profile.grade);
+    } else {
+      gradeRow.style.display = 'none';
+    }
+    const av = document.getElementById('avatar');
+    av.textContent = initials(profile.name);
+    av.style.background = colorFromName(profile.name || 'NeoVidya');
+  }
+  paint();
+
+  // ----- EDIT MODAL -----
+  const modalRoot = document.getElementById('modalRoot');
+  let escListener = null;
+
+  document.getElementById('editBtn').addEventListener('click', openEdit);
+
+  function openEdit(){
+    // Ensure only one modal
+    closeModal();
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-back';
+    // FIX: Build grade options as proper HTML strings (no JSX)
+    const gradeOptions = Array.from({length:10}, (_,i) => `\n            <option>Class ${i+1}</option>`).join('');
+    wrapper.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Edit profile">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <strong style="font-family:var(--font-display)">Edit profile</strong>
+          <button id="mClose" class="button ghost" type="button" aria-label="Close">✖</button>
+        </div>
+        <div class="field" style="margin-top:8px">
+          <label for="fName">Full name</label>
+          <input id="fName" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="fSchool">School</label>
+          <input id="fSchool" autocomplete="organization" placeholder="School name" />
+        </div>
+        ${profile.role==='student' ? `
+        <div class="field">
+          <label for="fGrade">Grade</label>
+          <select id="fGrade">
+            <option value="">Select grade</option>${gradeOptions}
+          </select>
+        </div>` : ''}
+        <div class="field">
+          <label for="fEmail">Email</label>
+          <input id="fEmail" type="email" autocomplete="email" placeholder="yourname@gmail.com" />
+        </div>
+        <div class="actions">
+          <button id="mSave" class="button primary" type="button">Save</button>
+        </div>
+      </div>`;
+    modalRoot.appendChild(wrapper);
+
+    // Prefill safely
+    wrapper.querySelector('#fName').value = profile.name;
+    wrapper.querySelector('#fSchool').value = profile.school === '—' ? '' : profile.school;
+    const fEmail = wrapper.querySelector('#fEmail'); fEmail.value = profile.email === '—' ? '' : profile.email;
+    const gSel = wrapper.querySelector('#fGrade');
+    if(gSel && /^Class\s+\d+$/.test(profile.grade)) gSel.value = profile.grade;
+
+    // Focus first field
+    wrapper.querySelector('#fName').focus();
+
+    // Close handlers
+    wrapper.querySelector('#mClose').addEventListener('click', closeModal);
+    wrapper.querySelector('#mSave').addEventListener('click', saveModal);
+
+    escListener = (e)=>{ if(e.key === 'Escape') closeModal(); };
+    document.addEventListener('keydown', escListener);
+
+    function saveModal(){
+      const nm = wrapper.querySelector('#fName').value.trim() || profile.name;
+      const sc = (wrapper.querySelector('#fSchool').value || '').trim() || '—';
+      const em = (wrapper.querySelector('#fEmail').value || '').trim() || '—';
+      let gr = profile.grade;
+      if(gSel){ gr = (gSel.value || '').trim() || '—'; }
+
+      profile.name = nm;
+      profile.school = sc;
+      profile.email = em;
+      if(profile.role === 'student') profile.grade = gr;
+
+      localStorage.setItem('nv-name', profile.name);
+      localStorage.setItem('nv-school', profile.school);
+      localStorage.setItem('nv-email', profile.email);
+      if(profile.role === 'student') localStorage.setItem('nv-grade', profile.grade);
+
+      toast('Saved');
+      paint();
+      closeModal();
+    }
+  }
+
+  function closeModal(){
+    const open = modalRoot.querySelector('.modal-back');
+    if(open){ open.remove(); }
+    if(escListener){ document.removeEventListener('keydown', escListener); escListener = null; }
+  }
+
+  // ----- PROGRESS RESET -----
+  document.getElementById('resetProgress').addEventListener('click', ()=>{
+    if(!confirm('Reset XP and streak to 0?')) return;
+    profile.xp = 0; profile.streak = 0;
+    localStorage.setItem('nv-xp','0');
+    localStorage.setItem('nv-streak','0');
+    toast('Progress reset');
+    paint();
+  });
+
+  // ----- SIGN OUT -----
+  document.getElementById('signOut').addEventListener('click', ()=>{
+    if(!confirm('Sign out?')) return;
+    localStorage.removeItem('nv-role'); // keep identity; just sign out
+    toast('Signed out');
+    setTimeout(()=>{ window.location.replace('dash1.html'); }, 500);
+  });
+
+  // ----- HELPERS -----
+  function cap(s){ s=String(s||''); return s.charAt(0).toUpperCase()+s.slice(1); }
+
+  let toastTimer;
+  function toast(msg){
+    const t = document.getElementById('__toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ t.style.display = 'none'; }, 1400);
+  }
+})();
+</script>
+</body>
+</html>

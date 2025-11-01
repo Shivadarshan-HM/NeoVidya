@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NeoVidya – Courses & Syllabus</title>
+<meta name="theme-color" content="#0F4C81" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+    --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+    --bg-dark:#020817; --fg-dark:#E9F2FF; --bg-light:#EAF5FF; --fg-light:#0C1220;
+    --glass: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    --radius-2xl:28px; --shadow-lg:0 12px 32px rgba(7,26,46,.35);
+    --font-display:"Poppins",system-ui; --font-body:"Nunito",system-ui;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-body);line-height:1.5;min-height:100svh;transition:background .3s,color .3s}
+  body.theme-dark{background:radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%);color:var(--fg-dark)}
+  body.theme-light{background:var(--bg-light);color:var(--fg-light)}
+  .wrap{max-width:1200px;margin:auto;padding:clamp(12px,2.6vw,24px);display:grid;gap:16px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:40px;height:40px;border-radius:10px;background:conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500))}
+  h1{font-family:var(--font-display);font-size:22px;margin:0}
+  .button{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:0;cursor:pointer;border-radius:12px;font-weight:800}
+  .primary{background:linear-gradient(180deg, var(--nv-yellow-500), #D99C00);color:#1A1A1A;box-shadow:0 6px 16px rgba(244,180,0,.25)}
+  .ghost{background:rgba(255,255,255,.06);color:inherit}
+  body.theme-light .ghost{background:#f0f4ff}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.12)}
+  body.theme-light .pill{background:#eef6ff;color:#0B3A63}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .tool{border-radius:12px;padding:10px 12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);min-width:200px;color:inherit}
+  body.theme-light .tool{background:#fff;border-color:rgba(0,0,0,.08)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip-btn{padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);cursor:pointer;font-weight:800}
+  .chip-btn.active{background:linear-gradient(180deg,#F4B400,#D99C00);color:#1A1A1A;border:none}
+  body.theme-light .chip-btn{background:#f2f6ff;border-color:#dbe6ff;color:#0B3A63}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+  @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+  .card{grid-column:span 6; border-radius:var(--radius-2xl);box-shadow:var(--shadow-lg);padding:16px;background:var(--glass);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(6px)}
+  body.theme-light .card{background:#fff;border-color:rgba(0,0,0,.08)}
+  .head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .subject{display:flex;align-items:center;gap:10px}
+  .icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:20px}
+  .ic-math{background:#173b5f;color:#ffd46a}
+  .ic-sci{background:#18422e;color:#8ef0b4}
+  .ic-ss{background:#3f2d18;color:#ffd7a1}
+  .ic-eng{background:#2a2047;color:#a8a0ff}
+  .ic-cs{background:#0e2a3a;color:#7bd0ff}
+  .ic-art{background:#3a102a;color:#ff8db6}
+  .ic-pe{background:#193a16;color:#a9ff8e}
+  .ic-hi{background:#3a1d10;color:#ffc48e}
+  .syll{margin-top:10px;display:grid;gap:8px}
+  .topic{border-radius:14px;border:1px dashed rgba(255,255,255,.2);padding:10px;background:rgba(255,255,255,.04)}
+  body.theme-light .topic{background:#f7fbff;border-color:#dfe9ff}
+  .chap{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer}
+  .chap h4{margin:0;font-size:15px}
+  .content{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .content.in{max-height:600px}
+  .list{padding:8px 4px 4px 4px;display:grid;gap:8px}
+  .li{display:flex;align-items:center;gap:8px;padding:8px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+  body.theme-light .li{background:#fff;border-color:#eee}
+  .li .tag{padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px}
+  .aux{display:flex;gap:8px;align-items:center}
+  .aux a{color:#FFEC99;text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.35);padding-bottom:1px}
+  body.theme-light .aux a{color:#0F4C81;border-bottom-color:#0F4C8144}
+  .hint{font-size:12px;opacity:.9}
+  .subhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+</style>
+</head>
+
+<body class="theme-dark">
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>NeoVidya</h1>
+          <div class="pill" id="modePill">All Subjects • Syllabus Browser</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input id="search" class="tool" placeholder="Search subject / unit / item…" />
+        <button id="themeToggle" class="button ghost">🌙 Dark</button>
+        <button id="backBtn" class="button ghost" title="Go to previous page">⬅ Back</button>
+      </div>
+    </header>
+
+    <!-- SUBJECT CHIPS -->
+    <div class="chips" id="subjectChips"></div>
+
+    <!-- SUBJECT CARDS / SUBJECT VIEW -->
+    <section class="grid" id="grid"></section>
+
+    <div class="aux">
+      <span class="hint">Tip: We remember which units you expand per subject on this device.</span>
+      <a id="backToAll" href="#" style="display:none;margin-left:auto">⬅ Back to All Subjects</a>
+    </div>
+  </div>
+
+<script>
+(function(){
+  // ---------- Theme ----------
+  const themeBtn = document.getElementById('themeToggle');
+  const savedTheme = localStorage.getItem('nv-theme') || 'dark';
+  setTheme(savedTheme);
+  themeBtn.addEventListener('click', ()=> setTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark'));
+  function setTheme(mode){
+    document.body.classList.toggle('theme-dark', mode==='dark');
+    document.body.classList.toggle('theme-light', mode==='light');
+    themeBtn.textContent = mode==='dark' ? '🌙 Dark' : '☀ Light';
+    localStorage.setItem('nv-theme', mode);
+  }
+
+  // ---------- Data: Syllabus ----------
+  const syllabus = [
+    {
+      key:'math', title:'Mathematics', icon:'➗', ic:'ic-math', color:'#FFD46A',
+      chapters:[
+        { title:'Fractions', badges:['Core','Visual'], items:[
+          { type:'Lecture', text:'Fractions – Visual Models' },
+          { type:'Lecture', text:'Add & Subtract Fractions' },
+          { type:'Quiz', text:'Fractions Fundamentals (+60 XP)' },
+        ]},
+        { title:'Algebra Basics', badges:['Variables'], items:[
+          { type:'Lecture', text:'Intro to Variables & Expressions' },
+          { type:'Quiz', text:'Intro to Algebra (+50 XP)' },
+        ]},
+        { title:'Geometry', badges:['Shapes'], items:[
+          { type:'Lecture', text:'Basics of Angles & Triangles' },
+        ]},
+      ]
+    },
+    {
+      key:'science', title:'Science', icon:'🧪', ic:'ic-sci', color:'#8ef0b4',
+      chapters:[
+        { title:'Living Things', badges:['Bio'], items:[
+          { type:'Lecture', text:'Cells & Tissues' }, { type:'Quiz', text:'Life Basics (+50 XP)' }
+        ]},
+        { title:'Matter', badges:['Chem'], items:[
+          { type:'Lecture', text:'States of Matter' }, { type:'Lecture', text:'Mixtures & Solutions' }
+        ]},
+        { title:'Energy', badges:['Phys'], items:[
+          { type:'Lecture', text:'Forms of Energy' }, { type:'Quiz', text:'Energy Quiz (+40 XP)' }
+        ]},
+      ]
+    },
+    {
+      key:'social', title:'Social Science', icon:'🌍', ic:'ic-ss', color:'#ffd7a1',
+      chapters:[
+        { title:'Geography', badges:['Maps'], items:[
+          { type:'Lecture', text:'Reading Maps & Directions' }
+        ]},
+        { title:'History', badges:['Past'], items:[
+          { type:'Lecture', text:'Ancient Civilizations' }, { type:'Quiz', text:'Heritage Quiz (+40 XP)' }
+        ]},
+        { title:'Civics', badges:['Rights'], items:[
+          { type:'Lecture', text:'Community & Rules' }
+        ]},
+      ]
+    },
+    {
+      key:'english', title:'English', icon:'📚', ic:'ic-eng', color:'#a8a0ff',
+      chapters:[
+        { title:'Reading', badges:['Comprehension'], items:[
+          { type:'Lecture', text:'Unseen Passage Strategies' }, { type:'Quiz', text:'Vocabulary Mix (+40 XP)' }
+        ]},
+        { title:'Grammar', badges:['Tenses'], items:[
+          { type:'Lecture', text:'Present & Past Tenses' }, { type:'Lecture', text:'Articles & Prepositions' }
+        ]},
+        { title:'Writing', badges:['Creative'], items:[
+          { type:'Lecture', text:'Paragraph Writing' }
+        ]},
+      ]
+    },
+    {
+      key:'computer', title:'Computer Basics', icon:'💻', ic:'ic-cs', color:'#7bd0ff',
+      chapters:[
+        { title:'Know the Computer', badges:['CPU','I/O'], items:[
+          { type:'Lecture', text:'Hardware & Software' }, { type:'Quiz', text:'Know Your Computer (+60 XP)' }
+        ]},
+        { title:'Internet & Safety', badges:['Web'], items:[
+          { type:'Lecture', text:'Internet Basics' }, { type:'Quiz', text:'Online Safety (+50 XP)' }
+        ]},
+        { title:'Shortcuts', badges:['Keys'], items:[
+          { type:'Lecture', text:'Keyboard Shortcuts 101' }
+        ]},
+      ]
+    },
+    {
+      key:'art', title:'Art', icon:'🎨', ic:'ic-art', color:'#ff8db6',
+      chapters:[
+        { title:'Elements of Art', badges:['Line','Color'], items:[
+          { type:'Lecture', text:'Color Wheel & Harmony' }
+        ]},
+        { title:'Drawing', badges:['Practice'], items:[
+          { type:'Lecture', text:'Basic Shapes to Objects' }, { type:'Quiz', text:'Art Basics (+40 XP)' }
+        ]},
+      ]
+    },
+    {
+      key:'pe', title:'Physical Education', icon:'🏃', ic:'ic-pe', color:'#a9ff8e',
+      chapters:[
+        { title:'Warm-up & Stretch', badges:['Flexibility'], items:[
+          { type:'Lecture', text:'Dynamic vs Static' }
+        ]},
+        { title:'Fitness', badges:['Health'], items:[
+          { type:'Lecture', text:'Endurance & Strength' }, { type:'Quiz', text:'Fitness Fundamentals (+60 XP)' }
+        ]},
+      ]
+    },
+    {
+      key:'hindi', title:'Hindi', icon:'🅷', ic:'ic-hi', color:'#ffc48e',
+      chapters:[
+        { title:'पठन', badges:['Comprehension'], items:[
+          { type:'Lecture', text:'अपठित गद्यांश' }
+        ]},
+        { title:'व्याकरण', badges:['संज्ञा','काल'], items:[
+          { type:'Lecture', text:'संज्ञा व सर्वनाम' }, { type:'Quiz', text:'व्याकरण मूलाधार (+50 XP)' }
+        ]},
+        { title:'लेखन', badges:['রचनात्मक'], items:[
+          { type:'Lecture', text:'चित्र आधारित अनुच्छेद' }
+        ]},
+      ]
+    },
+  ];
+
+  // ---------- Config: open separate page? ----------
+  const OPEN_SEPARATE_PAGE = false;
+  const subjectRoutes = {
+    math:'mathematics.html',
+    science:'science.html',
+    social:'social-science.html',
+    english:'english.html',
+    computer:'computer-basics.html',
+    art:'art.html',
+    pe:'physical-education.html',
+    hindi:'hindi.html',
+  };
+
+  // ---------- State ----------
+  const grid = document.getElementById('grid');
+  const chipsEl = document.getElementById('subjectChips');
+  const searchEl = document.getElementById('search');
+  const modePill = document.getElementById('modePill');
+  const backToAll = document.getElementById('backToAll');
+
+  const openStateKey = (subKey)=> `courses-open-v2:${subKey}`;
+  let currentSubject = getHashSubject(); // null => All Subjects
+
+  // ---------- Build chips ----------
+  function buildChips(){
+    chipsEl.innerHTML = '';
+    const allBtn = document.createElement('button');
+    allBtn.className = 'chip-btn' + (currentSubject? '' : ' active');
+    allBtn.textContent = 'All Subjects';
+    allBtn.addEventListener('click', ()=> setSubject(null));
+    chipsEl.appendChild(allBtn);
+
+    syllabus.forEach(sub=>{
+      const b = document.createElement('button');
+      b.className = 'chip-btn' + (currentSubject===sub.key ? ' active' : '');
+      b.textContent = sub.title;
+      b.addEventListener('click', ()=> setSubject(sub.key));
+      chipsEl.appendChild(b);
+    });
+  }
+
+  // ---------- Render ----------
+  function render(){
+    buildChips();
+    backToAll.style.display = currentSubject ? 'inline-flex' : 'none';
+    modePill.textContent = currentSubject
+      ? `${getSub(currentSubject).title} • Syllabus`
+      : 'All Subjects • Syllabus Browser';
+
+    const list = currentSubject ? [getSub(currentSubject)] : syllabus;
+    grid.innerHTML = '';
+    list.forEach(sub => grid.appendChild(renderSubjectCard(sub, !!currentSubject)));
+  }
+
+  function renderSubjectCard(sub, focused){
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.dataset.key = sub.key;
+
+    // Saved expand/collapse state per subject
+    const savedOpen = JSON.parse(localStorage.getItem(openStateKey(sub.key)) || '{}');
+
+    // Header
+    const head = document.createElement('div');
+    head.className = 'head';
+
+    const subj = document.createElement('div');
+    subj.className = 'subject';
+
+    const icon = document.createElement('div');
+    icon.className = `icon ${sub.ic}`;
+    icon.textContent = sub.icon;
+
+    const titleWrap = document.createElement('div');
+
+    const title = document.createElement('div');
+    title.style.fontFamily = 'var(--font-display)';
+    title.style.fontWeight = '800';
+    title.textContent = sub.title;
+
+    const pill = document.createElement('div');
+    pill.className = 'pill';
+    pill.style.width = 'max-content';
+    pill.style.marginTop = '4px';
+    pill.textContent = `Syllabus • ${sub.chapters.length} units`;
+
+    titleWrap.appendChild(title);
+    titleWrap.appendChild(pill);
+    subj.appendChild(icon);
+    subj.appendChild(titleWrap);
+
+    const aux = document.createElement('div');
+    aux.className = 'aux';
+
+    const openAll = document.createElement('a');
+    openAll.href = '#';
+    openAll.dataset.openall = '1';
+    openAll.textContent = 'Open all';
+
+    const closeAll = document.createElement('a');
+    closeAll.href = '#';
+    closeAll.dataset.closeall = '1';
+    closeAll.textContent = 'Close all';
+
+    aux.appendChild(openAll);
+    aux.appendChild(closeAll);
+
+    if (!focused) {
+      const view = document.createElement('a');
+      view.href = '#';
+      view.dataset.view = sub.key;
+      view.title = `Open only ${sub.title}`;
+      view.textContent = 'View ▸';
+      aux.appendChild(view);
+    }
+
+    head.appendChild(subj);
+    head.appendChild(aux);
+
+    // Units
+    const syll = document.createElement('div');
+    syll.className = 'syll';
+
+    sub.chapters.forEach((c, idx)=>{
+      const unitId = `${sub.key}-${idx}`;
+
+      const topic = document.createElement('div');
+      topic.className = 'topic';
+
+      const chap = document.createElement('div');
+      chap.className = 'chap';
+      chap.dataset.toggle = unitId;
+
+      const h4 = document.createElement('h4');
+      h4.textContent = `Unit ${idx+1}: ${c.title}`;
+
+      const badgesWrap = document.createElement('div');
+      badgesWrap.className = 'aux';
+
+      c.badges.forEach(b=>{
+        const tag = document.createElement('span');
+        tag.className = 'pill';
+        tag.textContent = b;
+        badgesWrap.appendChild(tag);
+      });
+
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'button ghost';
+      toggleBtn.style.padding = '6px 10px';
+      toggleBtn.textContent = '▼';
+      badgesWrap.appendChild(toggleBtn);
+
+      chap.appendChild(h4);
+      chap.appendChild(badgesWrap);
+
+      const content = document.createElement('div');
+      content.className = 'content';
+      content.id = unitId;
+      if (savedOpen[unitId] === true) content.classList.add('in');
+
+      const list = document.createElement('div');
+      list.className = 'list';
+
+      c.items.forEach(it=>{
+        const li = document.createElement('div');
+        li.className = 'li';
+
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.textContent = it.type;
+
+        const label = document.createElement('div');
+        label.style.fontWeight = '700';
+        label.textContent = it.text;
+
+        li.appendChild(tag);
+        li.appendChild(label);
+        list.appendChild(li);
+      });
+
+      content.appendChild(list);
+
+      topic.appendChild(chap);
+      topic.appendChild(content);
+      syll.appendChild(topic);
+    });
+
+    card.appendChild(head);
+    card.appendChild(syll);
+    return card;
+  }
+
+  // ---------- Helpers ----------
+  function getSub(key){ return syllabus.find(s=>s.key===key); }
+  function setSubject(key){
+    // Optional: open separate pages
+    if (OPEN_SEPARATE_PAGE && key && subjectRoutes[key]) {
+      window.location.href = subjectRoutes[key];
+      return;
+    }
+    currentSubject = key || null;
+    setHashSubject(currentSubject);
+    render();
+  }
+  function setHashSubject(key){
+    if(!key){
+      history.replaceState(null,'', window.location.pathname);
+      return;
+    }
+    const url = new URL(window.location.href);
+    url.hash = `subject=${key}`;
+    history.replaceState(null,'', url.toString());
+  }
+  function getHashSubject(){
+    const h = (location.hash||'').replace(/^#/,'');
+    const m = h.match(/subject=([\w-]+)/);
+    if(m && getSub(m[1])) return m[1];
+    return null;
+  }
+
+  // ---------- Interactions ----------
+  grid.addEventListener('click',(e)=>{
+    // toggle unit
+    const chap = e.target.closest('.chap');
+    if(chap && chap.dataset.toggle){
+      const id = chap.dataset.toggle;
+      const panel = document.getElementById(id);
+      const open = panel.classList.toggle('in');
+      const subKey = id.split('-')[0];
+      const key = openStateKey(subKey);
+      const state = JSON.parse(localStorage.getItem(key) || '{}');
+      state[id] = open;
+      localStorage.setItem(key, JSON.stringify(state));
+      e.preventDefault(); return;
+    }
+    // open/close all
+    const openAll = e.target.closest('[data-openall]');
+    const closeAll = e.target.closest('[data-closeall]');
+    if(openAll || closeAll){
+      const card = e.target.closest('.card');
+      const makeOpen = !!openAll;
+      const subKey = card.dataset.key;
+      const key = openStateKey(subKey);
+      const state = JSON.parse(localStorage.getItem(key) || '{}');
+      const contents = card.querySelectorAll('.content');
+      contents.forEach((cEl)=>{
+        cEl.classList.toggle('in', makeOpen);
+        state[cEl.id] = makeOpen;
+      });
+      localStorage.setItem(key, JSON.stringify(state));
+      e.preventDefault(); return;
+    }
+    // view single subject
+    const viewLink = e.target.closest('[data-view]');
+    if(viewLink){
+      const subKey = viewLink.getAttribute('data-view');
+      setSubject(subKey);
+      e.preventDefault(); return;
+    }
+  });
+
+  // search (filters current view)
+  function applySearch(){
+    const q = (searchEl.value||'').toLowerCase().trim();
+    // render first to ensure nodes are fresh
+    render();
+    if(!q) return;
+
+    const cards = grid.querySelectorAll('.card');
+    cards.forEach(card=>{
+      let cardHasMatch = false;
+
+      const subjTitle = card.querySelector('.head .subject div div')?.textContent?.toLowerCase() || '';
+      if(subjTitle.includes(q)){ cardHasMatch = true; }
+
+      card.querySelectorAll('.topic').forEach((topic)=>{
+        const unitTitle = topic.querySelector('.chap h4')?.textContent?.toLowerCase() || '';
+        let unitHasMatch = unitTitle.includes(q);
+        topic.querySelectorAll('.li').forEach(li=>{
+          const t = li.textContent.toLowerCase();
+          const match = t.includes(q);
+          li.style.display = match ? '' : 'none';
+          if(match) unitHasMatch = true;
+        });
+        topic.style.display = unitHasMatch ? '' : 'none';
+        if(unitHasMatch) cardHasMatch = true;
+      });
+
+      card.style.display = cardHasMatch ? '' : 'none';
+    });
+  }
+  let sTimer;
+  searchEl.addEventListener('input', ()=>{
+    clearTimeout(sTimer); sTimer = setTimeout(applySearch, 120);
+  });
+
+  // back buttons
+  document.getElementById('backBtn').addEventListener('click', ()=> history.back());
+  backToAll.addEventListener('click',(e)=>{ e.preventDefault(); setSubject(null); });
+
+  // handle hash navigation (deep links)
+  window.addEventListener('hashchange', ()=>{
+    currentSubject = getHashSubject();
+    render();
+  });
+
+  // ---------- init ----------
+  render();
+})();
+</script>
+</body>
+</html>

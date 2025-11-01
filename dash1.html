@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -317,7 +318,7 @@
         </button>
 
         <div class="aux" aria-label="Support links">
-          <a href="forgetpass.html" id="forgot">Forgot password?</a>++ 
+          <a href="forgetpass.html" id="forgot">Forgot password?</a>
           <a href="newaccountsignup.html" id="create">New here? Create account</a>
         </div>
 
@@ -441,56 +442,5 @@
       if(prefersReduced){ sfxSwitch.classList.remove('on'); sfxSwitch.setAttribute('aria-checked','false'); }
     })();
   </script>
- <!-- Toast notification -->
-<div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-
-<style>
-  .toast {
-    position: fixed;
-    left: 50%;
-    bottom: 22px;
-    transform: translateX(-50%) translateY(20px);
-    min-width: 260px;
-    max-width: 92vw;
-    padding: 12px 16px;
-    border-radius: 14px;
-    background: #101826;
-    color: #E9F2FF;
-    border: 1px solid rgba(255,255,255,.18);
-    box-shadow: 0 10px 24px rgba(0,0,0,.25);
-    font-weight: 700;
-    letter-spacing: .2px;
-    opacity: 0;
-    pointer-events: none;
-    transition: transform .25s ease, opacity .25s ease;
-    z-index: 9999;
-  }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-</style>
-
-<script>
-  (function(){
-    const toastEl = document.getElementById('toast');
-    let timer;
-
-    function showToast(msg, duration = 2500) {
-      if (!toastEl) return;
-      clearTimeout(timer);
-      toastEl.textContent = msg;
-      toastEl.classList.add('show');
-      timer = setTimeout(() => toastEl.classList.remove('show'), duration);
-    }
-
-    const msg = sessionStorage.getItem('nv_toast');
-    if (msg) {
-      showToast(msg);
-      sessionStorage.removeItem('nv_toast');
-    }
-  })();
-</script>
- 
 </body>
 </html>
