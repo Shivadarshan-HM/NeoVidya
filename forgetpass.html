@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NeoVidya – Forgot Password</title>
+<meta name="theme-color" content="#0F4C81" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+  --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+  --bg-dark:#020817; --fg-dark:#E9F2FF;
+  --bg-light:#EAF5FF; --fg-light:#0C1220;
+  --radius-2xl:28px; --shadow-lg:0 12px 32px rgba(7,26,46,.35);
+  --font-display:"Poppins",system-ui; --font-body:"Nunito",system-ui;
+}
+,::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:var(--font-body);transition:background .3s,color .3s;display:flex;align-items:center;justify-content:center;padding:16px}
+body.theme-dark{background:radial-gradient(1200px 600px at 50% 120%,#00122a,var(--bg-dark) 60%);color:var(--fg-dark)}
+body.theme-light{background:var(--bg-light);color:var(--fg-light)}
+.card{max-width:500px;width:100%;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-2xl);
+  box-shadow:var(--shadow-lg);padding:32px;backdrop-filter:blur(6px);}
+body.theme-light .card{background:#ffffffdd;border-color:rgba(15,53,90,.12)}
+h1{font-family:var(--font-display);font-size:26px;margin:0 0 10px}
+.sub{opacity:.85;margin-bottom:20px;font-size:14px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+label{font-size:13px;opacity:.9}
+.input,select{width:100%;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.06);color:inherit;outline:none;}
+.input:focus,select:focus{border-color:var(--nv-blue-600);box-shadow:0 0 0 4px rgba(45,156,219,.18)}
+body.theme-light .input,body.theme-light select{background:#f5f8ff;border-color:#d7e7ff;color:#0C1220}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  border:none;cursor:pointer;border-radius:14px;font-weight:800;padding:12px 16px;
+  background:linear-gradient(180deg,#F4B400,#D99C00);color:#1A1A1A;box-shadow:0 10px 18px rgba(244,180,0,.25)}
+.button.ghost{background:rgba(255,255,255,.08);color:inherit;border:1px solid rgba(255,255,255,.18);box-shadow:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.help{font-size:13px;opacity:.8}
+.ok{color:var(--nv-green-600)}.err{color:var(--nv-coral-500)}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.logo{width:44px;height:44px;border-radius:10px;
+  background:conic-gradient(from 210deg,var(--nv-yellow-500),var(--nv-green-600),var(--nv-blue-600),var(--nv-yellow-500));}
+h2{margin:0;font-family:var(--font-display);font-size:22px}
+.theme-toggle{border:0;border-radius:1000px;padding:8px 12px;background:#ffffff22;color:inherit;cursor:pointer;font-weight:700}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(0,0,0,.8);
+  color:#fff;padding:10px 16px;border-radius:12px;display:none;font-size:14px;backdrop-filter:blur(6px);}
+.hidden{display:none!important}
+</style>
+</head>
+<body class="theme-dark">
+<div class="card">
+  <header>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo"></div>
+      <div><h2>NeoVidya</h2><div style="font-size:13px;opacity:.85">Password Recovery</div></div>
+    </div>
+    <button id="themeToggle" class="theme-toggle">🌙</button>
+  </header>
+
+  <h1>Forgot Password?</h1>
+  <p class="sub">No worries! Verify your school and reset it in a few steps.</p>
+
+  <!-- Step 1 -->
+  <div id="step1">
+    <div class="field">
+      <label for="role">I am a</label>
+      <select id="role"><option value="student">Student</option><option value="teacher">Teacher</option></select>
+    </div>
+    <div class="field">
+      <label for="email">Registered Gmail</label>
+      <input id="email" class="input" type="email" placeholder="you@gmail.com" />
+    </div>
+    <div class="row">
+      <button id="next1" class="button">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step2" class="hidden">
+    <div class="field">
+      <label for="school">School Name</label>
+      <input id="school" class="input" placeholder="Enter school name" />
+      <div class="help">Must match your registered school.</div>
+    </div>
+    <div id="tcodeWrap" class="field hidden">
+      <label for="tcode">Teacher Code</label>
+      <input id="tcode" class="input" placeholder="Enter code provided by school" />
+    </div>
+    <div id="vmsg" class="help"></div>
+    <div class="row">
+      <button id="back1" class="button ghost">⬅ Back</button>
+      <button id="next2" class="button">Verify</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="step3" class="hidden">
+    <div class="field">
+      <label for="np1">New Password</label>
+      <input id="np1" class="input" type="password" placeholder="Enter new password" />
+    </div>
+    <div class="field">
+      <label for="np2">Confirm Password</label>
+      <input id="np2" class="input" type="password" placeholder="Re-enter password" />
+    </div>
+    <div id="smsg" class="help"></div>
+    <div class="row">
+      <button id="back2" class="button ghost">⬅ Back</button>
+      <button id="save" class="button">Save Password</button>
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  // Theme
+  const tbtn=document.getElementById('themeToggle');
+  const saved=localStorage.getItem('nv-theme')||'dark';
+  setTheme(saved);
+  tbtn.addEventListener('click',()=>setTheme(document.body.classList.contains('theme-dark')?'light':'dark'));
+  function setTheme(mode){
+    const dark=(mode==='dark');
+    document.body.classList.toggle('theme-dark',dark);
+    document.body.classList.toggle('theme-light',!dark);
+    tbtn.textContent=dark?'🌙':'☀';
+    localStorage.setItem('nv-theme',mode);
+  }
+
+  // Data
+  const USERS_KEY='nv-users';
+  const CODES={"Sarvodaya Vidyalaya":"SV-TEACH-2025","Govt High School Rampur":"RAMPUR-TH-19"};
+
+  const step1=document.getElementById('step1'), step2=document.getElementById('step2'), step3=document.getElementById('step3');
+  const role=document.getElementById('role'), email=document.getElementById('email'), next1=document.getElementById('next1');
+  const school=document.getElementById('school'), tcode=document.getElementById('tcode'), tcodeWrap=document.getElementById('tcodeWrap');
+  const vmsg=document.getElementById('vmsg'), back1=document.getElementById('back1'), next2=document.getElementById('next2');
+  const np1=document.getElementById('np1'), np2=document.getElementById('np2'), smsg=document.getElementById('smsg');
+  const back2=document.getElementById('back2'), save=document.getElementById('save');
+  const toastEl=document.getElementById('toast');
+  let currentKey='', found=null;
+
+  function toast(m){toastEl.textContent=m;toastEl.style.display='block';setTimeout(()=>toastEl.style.display='none',1400);}
+  function users(){try{return JSON.parse(localStorage.getItem(USERS_KEY)||'{}')}catch(e){return{}}}
+  function saveUsers(m){localStorage.setItem(USERS_KEY,JSON.stringify(m));}
+  function key(role,mail){return role+'|'+mail.toLowerCase();}
+  function ci(a,b){return (a||'').toLowerCase().trim()===(b||'').toLowerCase().trim();}
+
+  // Step 1
+  next1.onclick=()=>{
+    const map=users();
+    const mail=email.value.trim();
+    if(!mail||!/^[^@\s]+@gmail\.com$/i.test(mail)) return alert('Enter valid Gmail');
+    const k=key(role.value,mail);
+    if(!map[k]) return alert('No account found.');
+    found=map[k]; currentKey=k;
+    const hasCode=CODES[Object.keys(CODES).find(s=>ci(s,found.school))];
+    tcodeWrap.classList.toggle('hidden',!(found.role==='teacher'&&hasCode));
+    step1.classList.add('hidden');step2.classList.remove('hidden');toast('Account found!');
+  };
+
+  back1.onclick=()=>{step2.classList.add('hidden');step1.classList.remove('hidden');};
+  next2.onclick=()=>{
+    if(!found)return;
+    if(!school.value.trim()) return vmsg.textContent='Enter school name';
+    if(!ci(school.value,found.school)){vmsg.textContent='School name mismatch';vmsg.className='help err';return;}
+    if(found.role==='teacher'){
+      const exp=CODES[Object.keys(CODES).find(s=>ci(s,found.school))];
+      if(exp){
+        if(!tcode.value.trim()) return vmsg.textContent='Enter teacher code';
+        if(tcode.value.trim()!==exp) return vmsg.textContent='Incorrect teacher code';
+      }
+    }
+    vmsg.textContent='Verified ✓';vmsg.className='help ok';
+    step2.classList.add('hidden');step3.classList.remove('hidden');toast('Verified');
+  };
+
+  back2.onclick=()=>{step3.classList.add('hidden');step2.classList.remove('hidden');};
+  save.onclick=()=>{
+    if(!found)return;
+    if(!np1.value||!np2.value) return smsg.textContent='Enter both fields';
+    if(np1.value!==np2.value) return smsg.textContent='Passwords do not match';
+    if(np1.value.length<4) return smsg.textContent='Too short';
+    const map=users();map[currentKey].pass=np1.value;saveUsers(map);
+    toast('Password changed!');setTimeout(()=>location.href='index.html',800);
+  };
+})();
+</script>
+</body>
+</html>
