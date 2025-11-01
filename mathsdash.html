@@ -336,7 +336,7 @@
           const ang = Math.random()*Math.PI*2; const dist = 60 + Math.random()*40; const tx = Math.cos(ang)*dist; const ty = Math.sin(ang)*dist;
           s.animate([
             { transform: 'translate(-50%, -50%)', opacity: 1 },
-            { transform: translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)), opacity: 0 }
+           { transform: translate(calc(-50% + `${tx}px`), calc(-50% + `${ty}px`)), opacity: 0 }
           ], { duration: 600 + Math.random()*300, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = ()=> s.remove();
         }
       };
@@ -356,13 +356,13 @@
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
     // 🔑 PASTE YOUR PROJECT CONFIG HERE
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+  const firebaseConfig = {
+      apiKey: "AIzaSyDS6seTw9OCYuPc5QqhDWpC6OYoYp4MkU4",
+      authDomain: "neovidya-c3649.firebaseapp.com",
+      projectId: "neovidya-c3649",
+      storageBucket: "neovidya-c3649.firebasestorage.app",
+      messagingSenderId: "229809118865",
+      appId: "1:229809118865:web:6c6d8d0d191df149176930"
     };
 
     const app = initializeApp(firebaseConfig);
