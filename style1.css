@@ -119,7 +119,7 @@ body{
 
 /* cta box */
 .cta-box{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff7e6,#fff3d6);text-align:center;box-shadow:var(--soft-shadow)}
-.cta-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.cta-title{font-size:18px;font-weight:700;margin-bottom:6px;text-decoration: none;}
 .muted{color:var(--muted);font-size:13px}
 
 /* responsive */
