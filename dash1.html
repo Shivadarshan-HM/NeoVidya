@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learning Dashboard</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <div class="left">
+      
+      </div>
+
+      <div class="right">
+        <label class="switch" title="Toggle dark / light theme">
+          <input type="checkbox" id="theme-toggle" aria-label="Toggle dark mode">
+          <span class="slider" aria-hidden></span>
+        </label>
+        <div class="greeting">Let's learn something new today!</div>
+      </div>
+    </header>
+
+    <section class="progress-card" aria-label="Weekly progress">
+      <div class="progress-left">
+        <h2>Weekly Progress</h2>
+        <p class="muted">0 out of 4 lessons completed</p>
+
+        <!-- main progress bar: width set in JS -->
+        <div class="bar" aria-hidden>
+          <div class="fill" id="main-fill" data-progress="0"></div>
+        </div>
+
+        <div class="streak">🔥 <span id="streak-text">0 day learning streak!</span></div>
+      </div>
+
+      <div class="progress-right">
+        <div class="percent" id="main-percent">0%</div>
+        <div class="sub muted">This week</div>
+      </div>
+    </section>
+
+    <main class="main">
+      <section class="subjects-center">
+        <div class="section-title center">SUBJECTS</div>
+
+        <div class="cards-grid">
+          <article class="card" tabindex="0">
+            <div class="meta">
+              <div class="avatar">M</div>
+              <div>
+                <div class="small-label accent">Mathematics</div>
+                <h3>Mathematics</h3>
+                <p class="time muted">⏱ 0 min</p>
+              </div>
+            </div>
+
+            <div class="small-bar" aria-hidden><div class="small-fill" data-progress="0"></div></div>
+
+            <div class="card-footer">
+              <small class="muted">0% complete</small>
+              <div class="cta"><button class="btn continue" data-subject="mathematics">Continue</button></div>
+            </div>
+          </article>
+
+          <article class="card" tabindex="0">
+            <div class="meta">
+              <div class="avatar">S</div>
+              <div>
+                <div class="small-label gold">Science</div>
+                <h3>Science</h3>
+                <p class="time muted">⏱ 0 min</p>
+              </div>
+            </div>
+
+            <div class="small-bar" aria-hidden><div class="small-fill" data-progress="0"></div></div>
+
+            <div class="card-footer">
+              <small class="muted">0% complete</small>
+              <div class="cta"><button class="btn continue" data-subject="science">Continue</button></div>
+            </div>
+          </article>
+
+          <article class="card" tabindex="0">
+            <div class="meta">
+              <div class="avatar">E</div>
+              <div>
+                <div class="small-label orange">English</div>
+                <h3>English</h3>
+                <p class="time muted">⏱ 0 min</p>
+              </div>
+            </div>
+
+            <div class="small-bar" aria-hidden><div class="small-fill" data-progress="0"></div></div>
+
+            <div class="card-footer">
+              <small class="muted">0% complete</small>
+              <div class="cta"><button class="btn continue" data-subject="english">Continue</button></div>
+            </div>
+          </article>
+
+          <article class="card" tabindex="0">
+            <div class="meta">
+              <div class="avatar">CB</div>
+              <div>
+                <div class="small-label green">Digital Literacy</div>
+                <h3>Computer Basics</h3>
+                <p class="time muted">⏱ 0 min</p>
+              </div>
+            </div>
+
+            <div class="small-bar" aria-hidden><div class="small-fill" data-progress="0"></div></div>
+
+            <div class="card-footer">
+              <small class="muted">0% complete</small>
+              <div class="cta"><button class="btn continue" data-subject="computer-basics">Continue</button></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="quick-section">
+        <div class="section-title">Quick Actions</div>
+        <div class="quick">
+          <div class="qa card quick-card" tabindex="0"><div class="icon">📝</div><h4>Practice Quiz</h4><p class="muted">Test your knowledge</p></div>
+          <div class="qa card quick-card" tabindex="0"><div class="icon">🖥</div><h4>Digital Skills</h4><p class="muted">Learn computer basics</p></div>
+          <div class="qa card quick-card" tabindex="0"><div class="icon">👥</div><h4>Study Group</h4><p class="muted">Join classmates</p></div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="card small-card">
+        <h3>🏆 Achievements</h3>
+        <div class="ach-list">
+          <div class="ach">🥇 <div class="ach-text">First Lesson Complete</div></div>
+          <div class="ach">🔥 <div class="ach-text">Week Streak</div></div>
+          <div class="ach gray">🏅 <div class="ach-text">Quiz Master</div></div>
+        </div>
+      </div>
+
+      <div class="card small-card offline">
+        <h3>📥 Offline Content</h3>
+        <div class="row muted"><div>Downloaded</div><div>12 lessons</div></div>
+        <div class="row muted"><div>Storage used</div><div>2.4 GB</div></div>
+        <div class="storage" aria-hidden><div class="storage-fill" data-progress="62"></div></div>
+
+        <div class="offline-toggle-row">
+          <label class="offline-switch">
+            <input id="offline-checkbox" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+          <div class="muted">Offline</div>
+        </div>
+
+        <div style="text-align:center; margin-top:10px">
+          <button class="btn small manage">Manage Downloads</button>
+        </div>
+      </div>
+
+      <div class="card cta-box">
+        <div class="cta-title">Keep Going!</div>
+        <div class="muted">You're doing great! Complete one more lesson to maintain your streak.</div>
+        <div style="margin-top:12px"><button class="btn big continue" data-subject="any">Continue Learning</button></div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function(){
+      const body = document.body;
+      const toggle = document.getElementById('theme-toggle');
+      const LS_KEY = 'learning-dashboard-theme'; // 'dark' or 'light'
+      
+      // Apply saved theme or system preference on load
+      function applyInitialTheme(){
+        const saved = localStorage.getItem(LS_KEY);
+        if(saved === 'dark'){
+          body.classList.add('dark');
+          toggle.checked = true;
+        } else if(saved === 'light'){
+          body.classList.remove('dark');
+          toggle.checked = false;
+        } else {
+          // no saved preference -> use prefers-color-scheme
+          const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if(prefersDark){
+            body.classList.add('dark');
+            toggle.checked = true;
+          } else {
+            body.classList.remove('dark');
+            toggle.checked = false;
+          }
+        }
+      }
+
+      // Toggle handler
+      function onToggle(){
+        if(toggle.checked){
+          body.classList.add('dark');
+          localStorage.setItem(LS_KEY, 'dark');
+        } else {
+          body.classList.remove('dark');
+          localStorage.setItem(LS_KEY, 'light');
+        }
+        // briefly pulse the container to highlight theme change
+        const container = document.querySelector('.container');
+        if(container){
+          container.style.transition = 'transform 260ms ease';
+          container.style.transform = 'scale(0.998)';
+          setTimeout(()=>{ container.style.transform = ''; }, 260);
+        }
+      }
+
+      // Animate progress bars: read each inner width style and animate from 0 -> target
+      function animateProgressBars(){
+        // main .bar
+        document.querySelectorAll('.bar > .fill, .small-bar > div, .offline .storage > .fill').forEach(el=>{
+          // get percent from inline style width if present, fallback to 0
+          let target = 0;
+          const inline = el.getAttribute('style') || '';
+          const match = inline.match(/width\s*:\s*([0-9]+)%/i);
+          if(match){
+            target = parseInt(match[1], 10);
+          } else {
+            // if no inline style, check data-progress
+            const dp = el.getAttribute('data-progress');
+            if(dp) target = parseInt(dp,10) || 0;
+          }
+          // start from 0 (ensure CSS initial state)
+          el.style.width = '0%';
+          // stagger animation slightly
+          setTimeout(()=>{ el.style.width = target + '%' }, 60 + Math.random()*200);
+        });
+
+        // Also update text percent in progress-right if possible (derive from .bar fill)
+        const mainFill = document.querySelector('.bar > .fill');
+        const percentText = document.querySelector('.progress-right .percent');
+        if(mainFill && percentText){
+          const inline = mainFill.getAttribute('style') || '';
+          const m = inline.match(/width\s*:\s*([0-9]+)%/i);
+          let target = 0;
+          if(m) target = parseInt(m[1],10);
+          // animate number
+          let start = 0;
+          const steps = Math.max(10, Math.floor(20 * (target/100)));
+          const stepTime = 850 / Math.max(1, steps);
+          const inc = target / steps;
+          const interval = setInterval(()=>{
+            start = Math.min(target, Math.round((start + inc)*10)/10);
+            percentText.textContent = Math.round(start) + '%';
+            if(start >= target) clearInterval(interval);
+          }, stepTime);
+        }
+      }
+
+      // Initialize: set a sensible main progress value (if still 0 set to combined average example)
+      function ensureMainProgress() {
+        const mainFill = document.querySelector('.bar > .fill');
+        if(!mainFill) return;
+        // if mainFill has width 0% in markup, compute average of small bars as example
+        const inline = mainFill.getAttribute('style') || '';
+        const hasMain = /width\s*:\s*([1-9][0-9]?|100)%/i.test(inline);
+        if(!hasMain){
+          const smalls = Array.from(document.querySelectorAll('.small-bar > div'));
+          const vals = smalls.map(el=>{
+            const st = el.getAttribute('style') || '';
+            const m = st.match(/width\s*:\s*([0-9]+)%/i);
+            return m ? parseInt(m[1],10) : 0;
+          });
+          if(vals.length){
+            const avg = Math.round(vals.reduce((s,v)=>s+v,0)/vals.length);
+            mainFill.setAttribute('style', 'width:' + avg + '%');
+          } else {
+            mainFill.setAttribute('style', 'width:0%');
+          }
+        }
+      }
+
+      // Run initial setup
+      applyInitialTheme();
+      ensureMainProgress();
+
+      // Wait for DOM content paint then animate
+      window.addEventListener('load', ()=>{
+        animateProgressBars();
+      });
+
+      // Toggle interaction
+      toggle.addEventListener('change', onToggle);
+
+      // If system theme changes and the user hasn't saved a preference, reflect it
+      if(window.matchMedia){
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
+          const saved = localStorage.getItem(LS_KEY);
+          if(!saved){
+            if(e.matches){
+              body.classList.add('dark');
+              toggle.checked = true;
+            } else {
+              body.classList.remove('dark');
+              toggle.checked = false;
+            }
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

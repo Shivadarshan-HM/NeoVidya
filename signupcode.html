@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <style>
+    /* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0062ff, #000000);
+}
+
+/* Form container */
+.form-box {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 32px 0 rgba(22, 35, 221, 0.37);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  width: 350px;
+  text-align: center;
+  color: #fff;
+}
+
+/* Title */
+.title {
+  font-size: 2em;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Input field box */
+.input-box {
+  position: relative;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 10px 40px 10px 10px;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+  background: transparent;
+  color: #ffffff;
+  outline: none;
+  font-size: 1em;
+}
+
+.input-box label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  pointer-events: none;
+  color: rgb(255, 255, 255);
+  transition: 0.3s ease;
+}
+
+/* Floating label effect */
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
+  top: -12px;
+  left: 5px;
+  font-size: 0.8em;
+  color: #fff;
+}
+
+/* Icon style */
+.input-box i {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.2em;
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  background: #fff;
+  color: #00f90c;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.btn:hover {
+  background: #00ffc3;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Animation (optional) */
+.animation {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease forwards;
+  animation-delay: calc(var(--i) * 0.05s);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+  </style>
+</head>
+<body>
+    <div class="form-box register">
+        <h2 class="title animation" style="--i: 17; --j: 0"
+>Sign up</h2>
+<form actoon ="#">
+    <div class ="input-box animation" style="--i: 18;--j: 1">
+        <input type="text" required/>
+        <label for="">username</label>
+        <i class="bx bxs-user"></i>
+
+
+    </div>
+    <div class="input-box animation" style="--i: 19; --j: 2">
+        <input type="email" required/>
+        <label for="">email</label>
+        <i class="bx bxs-envelope"></i>
+
+    </div>
+    <div class="input-box animation" style="--i: 20; --j: 3">
+        <input type="password" required/>
+        <label for="">password</label>
+        <i class="bx bxs-lock-alt"></i>
+        </div>
+        <button type ="submit" class="="btn animation" style="--i: 21; --j: 4">
+            Signup
+            <a href="/dashboard.html">Signup</a>
+
+        
+        </button>
+</form>
+
+    </div>
+    
+</body>
+</html>

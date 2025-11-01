@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Learning Dashboard — Progress</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style2.css"
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <!-- back link to previous page (change href if needed) -->
+      <a class="back" href="dash1.html" title="Back to dashboard">← Back</a>
+
+      <div class="top-right">
+        <div class="theme-toggle" title="Toggle theme">
+          <label class="switch" aria-hidden>
+            <input id="theme-toggle" type="checkbox" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <!-- YOUR PROGRESS -->
+    <section class="progress-card" aria-labelledby="progress-title">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <h3 id="progress-title" style="margin:0;font-size:15px;color:var(--muted);font-weight:700">Your Progress</h3>
+        <div class="progress-inner">
+          <!-- animated circular progress -->
+          <div class="progress-circle" aria-hidden>
+            <svg width="150" height="150" viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#4da6ff"/>
+                  <stop offset="100%" stop-color="#0551d9"/>
+                </linearGradient>
+              </defs>
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#e6ecf6" stroke-width="12"></circle>
+              <circle id="progress-ring" cx="60" cy="60" r="48" fill="none" stroke="url(#g1)" stroke-width="12" stroke-linecap="round" stroke-dasharray="302.65" stroke-dashoffset="302.65"></circle>
+            </svg>
+            <div class="num" id="ring-num">0%</div>
+          </div>
+
+          <div style="min-width:260px;display:flex;flex-direction:column;align-items:center">
+            <div style="color:var(--muted);font-weight:600">This Week's Progress</div>
+            <div style="height:6px;width:220px;background:#eef2ff;border-radius:999px;margin-top:10px;overflow:hidden">
+              <div id="linear-fill" style="width:0%;height:100%;background:linear-gradient(90deg,#7ac7ff,#2c6fff);transition:width .9s cubic-bezier(.2,.8,.2,1)"></div>
+            </div>
+            <div style="margin-top:12px" class="badges" aria-hidden>
+              <div class="badge yellow">🔥 Learning Streak: 0 Days</div>
+              <div class="badge green">🏆 Math Champion</div>
+              <div class="badge blue">⭐ Quick Learner</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Today's Learning hero -->
+    <section class="hero" aria-labelledby="today-title">
+      <div class="hero-top">
+        <img src="https://www.shutterstock.com/image-illustration/mathematics-horizontal-banner-presentation-website-260nw-1798855321.jpg" alt="lesson banner" />
+        <button class="play-btn" id="play-lesson" aria-label="Play lesson">
+          <span class="play-icon" aria-hidden></span>
+        </button>
+      </div>
+      <div class="hero-bottom">
+        <div class="meta">
+          <div class="pill">Mathematics · 25 min</div>
+          <h3 id="today-title">Introduction to Algebra</h3>
+          <p>Short description or learning objective can go here — one-line summary to entice learners.</p>
+        </div>
+
+        <div class="hero-actions">
+          <button class="start-btn" id="start-learning">Start Learning</button>
+          <div class="offline-toggle">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input id="offline-checkbox" type="checkbox" aria-label="Toggle offline mode" />
+              <span style="display:inline-block;width:40px;height:20px;background:#eef0f6;border-radius:999px;position:relative;padding:2px">
+                <span id="offline-knob" style="display:block;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 6px 14px rgba(16,40,85,0.08);transform:translateX(0);transition:transform .25s ease"></span>
+              </span>
+            </label>
+            <div style="font-size:13px;color:var(--muted)">Offline</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- small info -->
+    <div class="info-strip" role="status" aria-live="polite">
+      <div>
+        <div style="font-weight:800">🌐 Offline Mode Available</div>
+        <small>12 lessons downloaded and ready</small>
+      </div>
+      <div>›</div>
+    </div>
+
+    <!-- Quick Access -->
+    <div style="font-weight:700;color:var(--muted);">Quick Access</div>
+    <div class="quick-grid" role="navigation" aria-label="quick access">
+      <a class="quick-card" href="#" id="nav-courses">
+        <div class="icon" style="background:linear-gradient(180deg,#eaf3ff,#eef7ff); color:var(--accent-2); border-radius:10px">📚</div>
+        <div>
+          <h4>Courses</h4>
+          <p>Continue learning & browse courses</p>
+        </div>
+      </a>
+
+      <a class="quick-card" href="#" id="nav-quizzes">
+        <div class="icon" style="background:linear-gradient(180deg,#f8ebff,#f7f0ff); color:#8b46e7; border-radius:10px">📝</div>
+        <div>
+          <h4>Quizzes</h4>
+          <p>Test your knowledge</p>
+        </div>
+      </a>
+
+      <a class="quick-card" href="#" id="nav-rewards">
+        <div class="icon" style="background:linear-gradient(180deg,#fffbe8,#fff6d7); color:#c89f0b; border-radius:10px">🏆</div>
+        <div>
+          <h4>Rewards</h4>
+          <p>See your badges & points</p>
+        </div>
+      </a>
+
+      <a class="quick-card" href="#" id="nav-language">
+        <div class="icon" style="background:linear-gradient(180deg,#f0fff6,#e9fff0); color:#18ad6d; border-radius:10px">🌐</div>
+        <div>
+          <h4>Language</h4>
+          <p>Practice language skills</p>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- bottom navigation and talk button (fixed) -->
+  
+<script>
+  (function(){
+    // Theme: persist
+    const body = document.body;
+    const themeToggle = document.getElementById('theme-toggle');
+    const THEME_KEY = 'ld-theme';
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if(savedTheme === 'dark') { body.classList.add('dark'); themeToggle.checked = true; }
+    else { body.classList.remove('dark'); themeToggle.checked = false; }
+
+    themeToggle.addEventListener('change', ()=>{
+      if(themeToggle.checked){ body.classList.add('dark'); localStorage.setItem(THEME_KEY,'dark'); }
+      else { body.classList.remove('dark'); localStorage.setItem(THEME_KEY,'light'); }
+    });
+
+    // Circular progress animation (set to 75 as example)
+    const ring = document.getElementById('progress-ring');
+    const ringNum = document.getElementById('ring-num');
+    const linearFill = document.getElementById('linear-fill');
+
+    // set your progress value here (0-100) - could be fetched from server
+    const targetProgress = 75;
+    function animateRing(to){
+      const radius = 48; // same as svg r
+      const circumference = 2 * Math.PI * radius;
+      ring.style.strokeDasharray = circumference;
+      // start at full offset (empty)
+      ring.style.strokeDashoffset = circumference;
+      // animate dashoffset to (1 - progress) * circumference
+      const finalOffset = circumference * (1 - to/100);
+      // use JS animation for smooth increment
+      const duration = 900;
+      const start = performance.now();
+      function step(ts){
+        const t = Math.min(1, (ts - start)/duration);
+        // easeOutQuad
+        const eased = 1 - (1 - t) * (1 - t);
+        const curOffset = circumference - (circumference - finalOffset) * eased;
+        ring.style.strokeDashoffset = curOffset;
+        // update number
+        ringNum.textContent = Math.round(to * eased) + '%';
+        if(t < 1) requestAnimationFrame(step);
+        else { ring.style.strokeDashoffset = finalOffset; ringNum.textContent = to + '%'; }
+      }
+      requestAnimationFrame(step);
+    }
+    // Animate linear bar too
+    function animateLinear(to){
+      linearFill.style.width = '0%';
+      setTimeout(()=> linearFill.style.width = to + '%', 60);
+    }
+
+    // initialize
+    animateRing(targetProgress);
+    animateLinear(targetProgress);
+
+    // Play button demo (open modal or start video)
+    const playBtn = document.getElementById('play-lesson');
+    playBtn.addEventListener('click', ()=>{
+      alert('Play lesson — wire this to your video player or route to lesson page.');
+    });
+
+    // Start learning button (navigate to lesson)
+    document.getElementById('start-learning').addEventListener('click', ()=>{
+      // go to lesson page — change to your real path
+      window.location.href = 'lesson.html';
+    });
+
+    // Offline toggle with knob animation and "manage downloads" demo
+    const offlineCheck = document.getElementById('offline-checkbox');
+    const offlineKnob = document.getElementById('offline-knob');
+    const OFFLINE_KEY = 'ld-offline';
+    if(localStorage.getItem(OFFLINE_KEY) === 'on'){ offlineCheck.checked = true; offlineKnob.style.transform = 'translateX(20px)'; }
+    offlineCheck.addEventListener('change', ()=>{
+      if(offlineCheck.checked){ offlineKnob.style.transform = 'translateX(20px)'; localStorage.setItem(OFFLINE_KEY,'on'); }
+      else { offlineKnob.style.transform = 'translateX(0)'; localStorage.setItem(OFFLINE_KEY,'off'); }
+    });
+
+    // Talk with us floating button
+    document.getElementById('talk-btn').addEventListener('click', ()=>{
+      // Replace with your chat widget open code
+      alert('Open chat widget (replace this with real chat open code).');
+    });
+
+    // Quick access demo navigation - replace with real routes
+    document.getElementById('nav-courses').addEventListener('click', (e)=>{ e.preventDefault(); window.location.href='courses.html' });
+    document.getElementById('nav-quizzes').addEventListener('click', (e)=>{ e.preventDefault(); window.location.href='quizzes.html' });
+    document.getElementById('nav-rewards').addEventListener('click', (e)=>{ e.preventDefault(); window.location.href='rewards.html' });
+    document.getElementById('nav-language').addEventListener('click', (e)=>{ e.preventDefault(); window.location.href='language.html' });
+
+    // accessible keyboard handling: activate play with Enter/Space
+    playBtn.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); playBtn.click(); }
+    });
+
+  })();
+</script>
+</body>
+</html>
