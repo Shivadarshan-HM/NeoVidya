@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoVidya – हिंदी</title>
+  <meta name="theme-color" content="#0F4C81" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Poppins/Nunito में देवनागरी सपोर्ट पर्याप्त है; चाहें तो Noto Sans Devanagari भी जोड़ सकते हैं -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+      --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+      --bg-dark:#020817; --fg-dark:#E9F2FF; --bg-light:#EAF5FF; --fg-light:#0C1220;
+      --radius-2xl:28px; --shadow-lg:0 12px 32px rgba(7,26,46,.35);
+      --font-display:"Poppins","Noto Sans Devanagari",system-ui; 
+      --font-body:"Nunito","Noto Sans Devanagari",system-ui;
+      --focus:#7aa2ff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html:focus-within{scroll-behavior:smooth}
+    body{font-family:var(--font-body);line-height:1.5;min-height:100vh;transition:background .3s,color .3s}
+    body.theme-dark{background:radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%);color:var(--fg-dark)}
+    body.theme-light{background:var(--bg-light);color:var(--fg-light)}
+    .wrap{max-width:1200px;margin:auto;padding:clamp(12px,2.6vw,24px);display:grid;gap:16px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:40px;height:40px;border-radius:10px;background:conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500))}
+    .button{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:0;cursor:pointer;border-radius:12px;font-weight:800;transition:background .2s}
+    .button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+    .primary{background:linear-gradient(180deg, var(--nv-yellow-500), #D99C00);color:#1A1A1A}
+    .ghost{background:rgba(255,255,255,.06);color:inherit}
+    body.theme-light .ghost{background:#f0f4ff}
+    .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.12)}
+    body.theme-light .pill{background:#eef6ff;color:#0B3A63}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+    .card{border-radius:var(--radius-2xl);box-shadow:var(--shadow-lg);padding:16px;background:rgba(255,255,255,.05);backdrop-filter:blur(6px)}
+    .xpbar{height:10px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}
+    .xpbar>span{display:block;height:100%;background:linear-gradient(90deg,var(--nv-yellow-500),#D99C00)}
+    .lecture{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:14px;background:rgba(255,255,255,.04)}
+    .lecture .thumb{width:52px;height:36px;border-radius:10px;background:#173b5f;display:grid;place-items:center;font-size:18px}
+    .row{display:flex;gap:10px;align-items:center}
+    .spaced{display:flex;align-items:center;justify-content:space-between}
+    #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);padding:10px 14px;border-radius:12px;display:none}
+    textarea{font-family:var(--font-body);} 
+    /* बेहतर क्लिक टार्गेट */
+    .lecture button{min-width:110px}
+  </style>
+</head>
+<body class="theme-dark">
+  <a href="#main" class="pill" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">मुख्य सामग्री पर जाएँ</a>
+  <div class="wrap" id="main">
+    <header>
+      <div class="brand">
+        <div class="logo" role="img" aria-label="NeoVidya logo"></div>
+        <div>
+          <h1 style="font-family:var(--font-display)">NeoVidya</h1>
+          <div class="pill" aria-live="polite">हिंदी • कक्षा 6</div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="pill" id="levelPill">स्तर 7</span>
+        <span class="pill">XP: <span id="xp" aria-live="polite">720</span></span>
+        <button id="themeToggle" class="button ghost" aria-pressed="true" aria-label="थीम बदलें">🌙 डार्क</button>
+        <button id="backBtn" class="button ghost">⬅ डैशबोर्ड</button>
+      </div>
+    </header>
+
+    <section class="card" aria-labelledby="journeyTitle">
+      <div class="spaced">
+        <h2 id="journeyTitle" style="font-family:var(--font-display)">आपकी हिंदी यात्रा</h2>
+        <span class="pill" id="streakPill" aria-live="polite">स्ट्रिक: 🔥 6 दिन</span>
+      </div>
+      <div class="xpbar" style="margin-top:8px" aria-label="XP प्रगति">
+        <span id="xpBar" style="width:62%"></span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="lectureCard"></div>
+      <div class="card" id="quizCard"></div>
+      <div class="card" id="gameCard"></div>
+      <div class="card" id="notesCard"></div>
+      <div class="card" id="progressCard"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="card" role="status" aria-live="polite">+15 XP</div>
+
+  <script>
+  (function(){
+    // ---------- कॉन्स्टेंट्स ----------
+    const LECT_KEY='hi-lectures-completed';
+    const QUIZ_KEY='hi-quizzes-completed';
+    const NOTES_KEY='hi-notes';
+    const XP_KEY='hi-xp';
+    const THEME_KEY='nv-theme';
+
+    // ---------- थीम टॉगल + सिस्टम प्रेफरेंस ----------
+    const themeBtn = document.getElementById('themeToggle');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem(THEME_KEY) || (prefersDark ? 'dark' : 'light');
+    setTheme(savedTheme);
+    themeBtn.addEventListener('click', ()=> setTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark'));
+
+    function setTheme(mode){
+      const isDark = mode==='dark';
+      document.body.classList.toggle('theme-dark', isDark);
+      document.body.classList.toggle('theme-light', !isDark);
+      themeBtn.textContent = isDark ? '🌙 डार्क' : '☀ लाइट';
+      themeBtn.setAttribute('aria-pressed', String(isDark));
+      localStorage.setItem(THEME_KEY, mode);
+      // थीम रंग meta अपडेट
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if(meta) meta.setAttribute('content', isDark ? '#0F4C81' : '#EAF5FF');
+    }
+
+    // ---------- कार्ड टेम्पलेट्स ----------
+    document.getElementById('lectureCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>व्याख्यान</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:10px'>
+        <li class='lecture'>
+          <div class='thumb' aria-hidden='true'>📖</div>
+          <div><strong>पाठ 1: अपठित गद्यांश</strong><div class='pill'>पठन-कौशल और समझ</div></div>
+          <button class='button primary' data-play='L1' aria-label='पाठ 1 देखें'>▶ देखें</button>
+        </li>
+        <li class='lecture'>
+          <div class='thumb' aria-hidden='true'>📝</div>
+          <div><strong>व्याकरण: संज्ञा व सर्वनाम</strong><div class='pill'>उदाहरण और अभ्यास</div></div>
+          <button class='button primary' data-play='L2' aria-label='व्याकरण देखें'>▶ देखें</button>
+        </li>
+        <li class='lecture'>
+          <div class='thumb' aria-hidden='true'>✍</div>
+          <div><strong>रचनात्मक लेखन</strong><div class='pill'>चित्र देखकर अनुच्छेद</div></div>
+          <button class='button primary' data-play='L3' aria-label='रचनात्मक लेखन देखें'>▶ देखें</button>
+        </li>
+      </ul>`;
+
+    document.getElementById('quizCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>प्रश्नोत्तरी</h3>
+      <div class='lecture'>
+        <div class='thumb' aria-hidden='true'>🧠</div>
+        <div><strong>शब्द व वाक्य</strong><div class='pill'>10 प्रश्न • +60 XP</div></div>
+        <button class='button primary' data-quiz='words'>शुरू करें</button>
+      </div>
+      <div class='lecture'>
+        <div class='thumb' aria-hidden='true'>🔡</div>
+        <div><strong>व्याकरण मूलाधार</strong><div class='pill'>8 प्रश्न • +50 XP</div></div>
+        <button class='button primary' data-quiz='grammar'>शुरू करें</button>
+      </div>
+      <div class='lecture'>
+        <div class='thumb' aria-hidden='true'>📚</div>
+        <div><strong>वाचन कौशल ड्रिल</strong><div class='pill'>12 प्रश्न • +70 XP</div></div>
+        <button class='button primary' data-quiz='reading'>शुरू करें</button>
+      </div>`;
+
+    document.getElementById('gameCard').innerHTML = `
+      <div class='spaced'><h3 style='font-family:var(--font-display)'>🎮 गेम क्विज़</h3><span class='pill'>30 सेकंड चुनौती</span></div>
+      <div id='arcadeBox'>
+        <div class='spaced'><strong>स्कोर: <span id='arcScore'>0</span></strong><span class='pill' id='arcTime'>00:30</span></div>
+        <div id='arcQ' style='margin-top:10px'></div>
+        <div id='arcOpts' class='row' style='flex-wrap:wrap'></div>
+        <div class='row'><button class='button primary' id='arcStart'>▶ शुरू</button><button class='button ghost' id='arcStop' disabled>⏹ रोकें</button></div>
+      </div>`;
+
+    document.getElementById('notesCard').innerHTML = `
+      <div class='spaced'><h3 style='font-family:var(--font-display)'>🗒 ऑफ़लाइन नोट्स</h3><span class='pill'>ऑटो-सेव</span></div>
+      <textarea id='notesBox' rows='8' placeholder='यहाँ अपने नोट्स लिखें…' style='width:100%;margin-top:8px;border-radius:12px;padding:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:inherit'></textarea>
+      <div class='row'><button id='saveNotes' class='button primary'>💾 सहेजें</button><button id='downloadNotes' class='button ghost'>⬇ डाउनलोड</button></div>`;
+
+    document.getElementById('progressCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>📈 प्रगति</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:8px'>
+        <li class='row spaced'><span>व्याख्यान</span><strong><span id='pLectDone'>0</span>/3</strong></li>
+        <li class='row spaced'><span>प्रश्नोत्तरी</span><strong><span id='pQuizDone'>0</span>/3</strong></li>
+        <li class='row spaced'><span>कुल मिलाकर</span><strong><span id='pOverall'>0</span>%</strong></li>
+      </ul>
+      <div class='xpbar' aria-label='समग्र प्रगति'><span id='pBar' style='width:0%'></span></div>`;
+
+    // ---------- स्टेट + पर्सिस्टेंस ----------
+    function safeParse(json, fallback){
+      try { return JSON.parse(json); } catch { return fallback; }
+    }
+
+    let lectSet=new Set(safeParse(localStorage.getItem(LECT_KEY)||'[]', []));
+    let quizCount=parseInt(localStorage.getItem(QUIZ_KEY)||'0',10);
+    if(Number.isNaN(quizCount)) quizCount = 0;
+
+    const xpEl = document.getElementById('xp');
+    let xp = parseInt(localStorage.getItem(XP_KEY) || xpEl.textContent || '0', 10);
+    if(Number.isNaN(xp)) xp = 0;
+    xpEl.textContent = xp;
+
+    function updateProgress(){
+      const completedLect = lectSet.size;
+      const cappedQuiz = Math.min(quizCount,3);
+      const overall=Math.round(((completedLect + cappedQuiz)/6)*100);
+      document.getElementById('pLectDone').textContent=completedLect;
+      document.getElementById('pQuizDone').textContent=cappedQuiz;
+      document.getElementById('pOverall').textContent=overall;
+      document.getElementById('pBar').style.width=overall+'%';
+    }
+
+    function updateXPBar(){
+      const bar=document.getElementById('xpBar');
+      const pct = Math.min(100, (xp % 1000) / 10);
+      bar.style.width = pct + '%';
+    }
+
+    updateProgress();
+    updateXPBar();
+
+    // ---------- व्याख्यान “देखें” पर पूरा मानना ----------
+    document.addEventListener('click',e=>{
+      const playBtn = e.target.closest('[data-play]');
+      if(playBtn){
+        lectSet.add(playBtn.getAttribute('data-play'));
+        localStorage.setItem(LECT_KEY,JSON.stringify([...lectSet]));
+        updateProgress();
+        addXP(6);
+        showToast('व्याख्यान पूर्ण ✔');
+      }
+      const quizBtn = e.target.closest('[data-quiz]');
+      if(quizBtn){
+        // एक क्विज़ सेशन शुरू माना: क्विज़ प्रोग्रेस + XP क्रेडिट
+        incrementQuizProgress();
+        addXP(50); // औसत रिवार्ड; वास्तविक स्कोरिंग इंटीग्रेशन के बाद समायोजित करें
+        showToast('क्विज़ शुरू हुआ! +50 XP');
+      }
+    });
+
+    function incrementQuizProgress(){
+      quizCount = Math.min(3, (quizCount||0) + 1);
+      localStorage.setItem(QUIZ_KEY, String(quizCount));
+      updateProgress();
+    }
+
+    // ---------- नोट्स: लोड/ऑटो-सेव/डाउनलोड ----------
+    const notes=document.getElementById('notesBox');
+    notes.value=localStorage.getItem(NOTES_KEY)||'';
+
+    let saveDebounce;
+    notes.addEventListener('input', ()=>{
+      clearTimeout(saveDebounce);
+      saveDebounce = setTimeout(()=>{
+        localStorage.setItem(NOTES_KEY,notes.value);
+        showToast('नोट्स ऑटो-सेव हुए');
+      }, 600);
+    });
+
+    document.getElementById('saveNotes').onclick=()=>{
+      localStorage.setItem(NOTES_KEY,notes.value);
+      showToast('नोट्स सहेज लिए गए');
+    };
+
+    document.getElementById('downloadNotes').onclick=()=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([notes.value],{type:'text/plain'}));
+      a.download='hindi-notes.txt'; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+    };
+
+    // ---------- 🎮 आर्केड क्विज़ (त्वरित हिंदी ज्ञान) ----------
+    const FACTS=[
+      {q:'“सुंदर” का पर्यायवाची क्या है?',opts:['कुरूप','शुभ','मनोरम'],a:2},
+      {q:'“किताब” का विलोम है?',opts:['पुस्तक','खाली','कोई नहीं'],a:2},
+      {q:'वाक्य के मुख्य भेद कितने माने जाते हैं?',opts:['दो','तीन','चार'],a:1},
+      {q:'“वह स्कूल जाता है।” — काल?',opts:['भूतकाल','वर्तमानकाल','भविष्यत्काल'],a:1},
+      {q:'“बच्चे खेल रहे हैं” में क्रिया क्या है?',opts:['बच्चे','खेल रहे हैं','में'],a:1},
+      {q:'“जल” का समानार्थी क्या है?',opts:['नीर','अग्नि','धरा'],a:0},
+    ];
+
+    let score=0,time=30,timer=null,currentIndex=-1,usedIdx=[];
+    const arcQ=document.getElementById('arcQ'),arcO=document.getElementById('arcOpts'),
+          arcS=document.getElementById('arcScore'),arcT=document.getElementById('arcTime');
+
+    function randNextIndex(){
+      if(usedIdx.length===FACTS.length) usedIdx=[];
+      let n;
+      do{ n=Math.floor(Math.random()*FACTS.length); } while(usedIdx.includes(n));
+      usedIdx.push(n);
+      return n;
+    }
+
+    function nextQ(){
+      currentIndex = randNextIndex();
+      const it=FACTS[currentIndex];
+      arcQ.textContent=it.q; arcO.innerHTML='';
+      it.opts.forEach((o,i)=>{
+        const b=document.createElement('button');
+        b.className='button ghost'; b.textContent=o; b.setAttribute('type','button');
+        b.onclick=()=>{ handleAnswer(i===it.a); };
+        arcO.appendChild(b);
+      });
+    }
+
+    function handleAnswer(correct){
+      // सभी ऑप्शंस निष्क्रिय
+      [...arcO.querySelectorAll('button')].forEach(b=>b.disabled=true);
+      if(correct){ score++; arcS.textContent=score; addXP(4); }
+      setTimeout(nextQ, 250);
+    }
+
+    document.getElementById('arcStart').onclick=()=>{
+      if(timer) clearInterval(timer);
+      score=0; time=30; arcS.textContent='0'; arcT.textContent='00:30';
+      document.getElementById('arcStart').disabled=true;
+      document.getElementById('arcStop').disabled=false;
+      nextQ();
+      timer=setInterval(()=>{ 
+        time--; arcT.textContent='00:'+String(time).padStart(2,'0'); 
+        if(time<=0) stop(true); 
+      },1000);
+    };
+
+    document.getElementById('arcStop').onclick=()=> stop(false);
+
+    function stop(auto=false){
+      clearInterval(timer); timer=null;
+      document.getElementById('arcStart').disabled=false;
+      document.getElementById('arcStop').disabled=true;
+      showToast('चुनौती समाप्त! स्कोर '+score);
+      if(auto || score>0){
+        incrementQuizProgress();
+        // गेम खत्म पर बोनस
+        addXP(Math.min(40, score*2));
+      }
+    }
+
+    // ---------- हेल्पर्स ----------
+    function addXP(n){
+      xp = (xp||0) + n; 
+      xpEl.textContent = xp;
+      localStorage.setItem(XP_KEY, String(xp));
+      updateXPBar();
+      showToast('+'+n+' XP');
+    }
+
+    let toastTimer;
+    function showToast(t){
+      const x=document.getElementById('toast'); x.textContent=t; x.style.display='block';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>x.style.display='none',1400);
+    }
+
+    // ---------- नेव ----------
+    document.getElementById('backBtn').onclick=()=>{ if(document.referrer){ history.back(); } else { window.location.href = '/'; } };
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoVidya – Social Science</title>
+  <meta name="theme-color" content="#0F4C81" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+      --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+      --nv-ink:#0C1220; --nv-card:#0F355A; --bg-dark:#020817; --fg-dark:#E9F2FF;
+      --bg-light:#EAF5FF; --fg-light:#0C1220; --radius-2xl:28px;
+      --shadow-lg:0 12px 32px rgba(7,26,46,.35); --shadow-sm:0 6px 16px rgba(7,26,46,.2);
+      --font-display:"Poppins",system-ui; --font-body:"Nunito",system-ui;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--font-body);line-height:1.5;min-height:100svh;transition:background .3s,color .3s}
+    body.theme-dark{background:radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%);color:var(--fg-dark)}
+    body.theme-light{background:var(--bg-light);color:var(--fg-light)}
+    .glass{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(6px)}
+    body.theme-light .glass{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08)}
+    .wrap{max-width:1200px;margin:auto;padding:clamp(12px,2.6vw,24px);display:grid;gap:16px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:40px;height:40px;border-radius:10px;background:conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500));box-shadow:inset 0 0 0 3px rgba(255,255,255,.25),0 6px 16px rgba(0,0,0,.25)}
+    h1{font-family:var(--font-display);font-size:22px;margin:0}
+    .button{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:0;cursor:pointer;border-radius:12px;font-weight:800;letter-spacing:.3px}
+    .primary{background:linear-gradient(180deg, var(--nv-yellow-500), #D99C00);color:#1A1A1A;box-shadow:var(--shadow-sm)}
+    .ghost{background:rgba(255,255,255,.06);color:inherit}
+    body.theme-light .ghost{background:#f0f4ff}
+    .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.12)}
+    body.theme-light .pill{background:#eef6ff;color:#0B3A63}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{border-radius:var(--radius-2xl);box-shadow:var(--shadow-lg);padding:16px}
+    .xpbar{height:10px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}
+    .xpbar>span{display:block;height:100%;background:linear-gradient(90deg,var(--nv-yellow-500),#D99C00)}
+    .lecture{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:14px}
+    .lecture .thumb{width:52px;height:36px;border-radius:10px;background:#173b5f;display:grid;place-items:center;font-size:18px}
+    .row{display:flex;gap:10px;align-items:center}
+    .spaced{display:flex;align-items:center;justify-content:space-between}
+    .muted{opacity:.9}
+    #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);padding:10px 14px;border-radius:12px;background:rgba(0,0,0,.7);color:#fff;display:none}
+  </style>
+</head>
+<body class="theme-dark">
+  <div class="wrap">
+    <header>
+      <div class="brand"><div class="logo"></div><div><h1>NeoVidya</h1><div class="muted" style="font-size:12px">Social Science • Grade 6</div></div></div>
+      <div class="row"><span class="pill">Lvl 7</span><span class="pill">XP: <span id="xp">720</span></span><button id="themeToggle" class="button ghost">🌙 Dark</button><button id="backBtn" class="button ghost">⬅ Dashboard</button></div>
+    </header>
+
+    <section class="card glass">
+      <div class="spaced">
+        <h2 style="margin:0;font-family:var(--font-display)">Your Social Science Journey</h2>
+        <span class="pill">Streak: 🔥 6 days</span>
+      </div>
+      <div class="xpbar" style="margin-top:8px"><span id="xpBar" style="width:62%"></span></div>
+    </section>
+
+    <section class="grid">
+      <div class="card glass" id="lectureCard"></div>
+      <div class="card glass" id="quizCard"></div>
+      <div class="card glass" id="gameCard"></div>
+      <div class="card glass" id="notesCard"></div>
+      <div class="card glass" id="progressCard"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="glass">+15 XP</div>
+
+  <script>
+  (function(){
+    // --- Theme toggle ---
+    const themeBtn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('nv-theme') || 'dark';
+    setTheme(saved);
+    themeBtn.addEventListener('click', ()=> setTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark'));
+
+    function setTheme(mode){
+      document.body.classList.toggle('theme-dark', mode==='dark');
+      document.body.classList.toggle('theme-light', mode==='light');
+      themeBtn.textContent = mode==='dark' ? '🌙 Dark' : '☀ Light';
+      localStorage.setItem('nv-theme', mode);
+    }
+
+    // ---- Lectures ----
+    document.getElementById('lectureCard').innerHTML = `
+      <h3>Lectures</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:10px'>
+        <li class='lecture glass'><div class='thumb'>🎬</div><div><strong>Ancient Civilizations</strong><div class='muted'>Egypt, Indus, Mesopotamia</div></div><button class='button primary' data-play='L1'>▶ Watch</button></li>
+        <li class='lecture glass'><div class='thumb'>🎬</div><div><strong>Maps & Directions</strong><div class='muted'>Compass, scale, symbols</div></div><button class='button primary' data-play='L2'>▶ Watch</button></li>
+        <li class='lecture glass'><div class='thumb'>🎬</div><div><strong>What is Democracy?</strong><div class='muted'>Key features of democracy</div></div><button class='button primary' data-play='L3'>▶ Watch</button></li>
+      </ul>`;
+
+    // ---- Quizzes ----
+    document.getElementById('quizCard').innerHTML = `
+      <h3>Quizzes</h3>
+      <div class='lecture glass'><div class='thumb'>🏛</div><div><strong>Ancient Civilizations</strong><div class='muted'>10 questions • +60 XP</div></div><button class='button primary' data-quiz='ancient'>Start</button></div>
+      <div class='lecture glass'><div class='thumb'>🧭</div><div><strong>Maps & Directions</strong><div class='muted'>8 questions • +50 XP</div></div><button class='button primary' data-quiz='maps'>Start</button></div>`;
+
+    // ---- Arcade Quiz ----
+    document.getElementById('gameCard').innerHTML = `
+      <div class='spaced'><h3>🎮 Arcade Quiz</h3><span class='pill'>30s Rush</span></div>
+      <div id='arcadeBox'>
+        <div class='spaced'><strong>Score: <span id='arcScore'>0</span></strong><span class='pill' id='arcTime'>00:30</span></div>
+        <div id='arcQ' class='mt-2' style='font-size:18px'></div>
+        <div id='arcOpts' class='mt-2 row' style='flex-wrap:wrap'></div>
+        <div class='row mt-2'><button class='button primary' id='arcStart'>▶ Start</button><button class='button ghost' id='arcStop' disabled>⏹ Stop</button></div>
+      </div>`;
+
+    // ---- Notes ----
+    document.getElementById('notesCard').innerHTML = `
+      <div class='spaced'><h3>🗒 Offline Notes</h3><span class='pill'>Auto-save</span></div>
+      <textarea id='notesBox' rows='8' style='width:100%;margin-top:8px;border-radius:12px;padding:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:inherit'></textarea>
+      <div class='row mt-2'><button id='saveNotes' class='button primary'>💾 Save</button><button id='downloadNotes' class='button ghost'>⬇ Download .txt</button></div>`;
+
+    // ---- Progress ----
+    document.getElementById('progressCard').innerHTML = `
+      <h3>📈 Progress</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:8px'>
+        <li class='row spaced'><span>Lectures</span><strong><span id='pLectDone'>0</span>/3</strong></li>
+        <li class='row spaced'><span>Quizzes</span><strong><span id='pQuizDone'>0</span>/3</strong></li>
+        <li class='row spaced'><span>Overall</span><strong><span id='pOverall'>0</span>%</strong></li>
+      </ul>
+      <div class='xpbar'><span id='pBar' style='width:0%'></span></div>`;
+
+    // ---------- State ----------
+    const LECT_KEY='social-lectures'; const QUIZ_KEY='social-quizzes'; const NOTES_KEY='social-notes';
+    let lectSet=new Set(JSON.parse(localStorage.getItem(LECT_KEY)||'[]'));
+    let quizCount=parseInt(localStorage.getItem(QUIZ_KEY)||'0',10);
+    function saveLect(){localStorage.setItem(LECT_KEY,JSON.stringify([...lectSet]));updateProgress();}
+    function saveQuiz(){localStorage.setItem(QUIZ_KEY,String(quizCount));updateProgress();}
+    function updateProgress(){
+      document.getElementById('pLectDone').textContent=lectSet.size;
+      document.getElementById('pQuizDone').textContent=Math.min(3,quizCount);
+      const overall=Math.round(((lectSet.size+Math.min(3,quizCount))/6)*100);
+      document.getElementById('pOverall').textContent=overall;
+      document.getElementById('pBar').style.width=overall+'%';
+    }
+
+    document.querySelectorAll('[data-play]').forEach(btn=>{
+      btn.addEventListener('click',()=>{lectSet.add(btn.dataset.play);saveLect();addXP(10);});
+    });
+
+    const notesBox=document.getElementById('notesBox');
+    const saveBtn=document.getElementById('saveNotes');
+    const dlBtn=document.getElementById('downloadNotes');
+    notesBox.value=localStorage.getItem(NOTES_KEY)||'';
+    saveBtn.addEventListener('click',()=>{localStorage.setItem(NOTES_KEY,notesBox.value);showToast('Notes saved');});
+    dlBtn.addEventListener('click',()=>{
+      const blob=new Blob([notesBox.value||''],{type:'text/plain'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download='social-notes.txt';a.click();URL.revokeObjectURL(url);
+    });
+
+    // ---- Arcade Quiz ----
+    const FACTS=[
+      {q:'The River Nile flows in which continent?',opts:['Asia','Europe','Africa','Australia'],a:2},
+      {q:'On most maps, North is at the…',opts:['Top','Bottom','Left','Right'],a:0},
+      {q:'A democracy is a government by the…',opts:['Army','King','People','Aliens'],a:2},
+      {q:'The largest ocean is the…',opts:['Atlantic','Pacific','Indian','Arctic'],a:1},
+      {q:'New Delhi is the capital of…',opts:['Nepal','Sri Lanka','India','Bhutan'],a:2}
+    ];
+    const arcStart=document.getElementById('arcStart');
+    const arcStop=document.getElementById('arcStop');
+    const arcQ=document.getElementById('arcQ');
+    const arcOpts=document.getElementById('arcOpts');
+    const arcTime=document.getElementById('arcTime');
+    const arcScore=document.getElementById('arcScore');
+    let arcTick=null,timeLeft=30,score=0;
+    function rand(n){return Math.floor(Math.random()*n);}
+    function nextArcQ(){
+      const item=FACTS[rand(FACTS.length)];
+      arcQ.textContent=item.q;arcOpts.innerHTML='';
+      item.opts.forEach((t,i)=>{
+        const b=document.createElement('button');b.className='button ghost';b.textContent=t;
+        b.addEventListener('click',()=>{if(i===item.a){score++;arcScore.textContent=score;addXP(4);}nextArcQ();});
+        arcOpts.appendChild(b);
+      });
+    }
+    function startArcade(){
+      score=0;arcScore.textContent='0';timeLeft=30;arcTime.textContent='00:30';
+      arcStart.disabled=true;arcStop.disabled=false;nextArcQ();
+      if(arcTick)clearInterval(arcTick);
+      arcTick=setInterval(()=>{
+        timeLeft--;arcTime.textContent='00:'+String(timeLeft).padStart(2,'0');
+        if(timeLeft<=0){stopArcade(true);}
+      },1000);
+    }
+    function stopArcade(auto=false){
+      clearInterval(arcTick);arcStart.disabled=false;arcStop.disabled=true;
+      showToast(`Arcade done! Score ${score}`);
+      if(auto||score>0){quizCount=Math.max(quizCount,1);saveQuiz();}
+    }
+    arcStart.addEventListener('click',startArcade);
+    arcStop.addEventListener('click',()=>stopArcade(false));
+
+    document.getElementById('backBtn').addEventListener('click',()=>window.location.href='neovidyadashboard.html');
+
+    function addXP(n){
+      const xpEl=document.getElementById('xp');const bar=document.getElementById('xpBar');
+      const cur=parseInt(xpEl.textContent||'0',10);const next=cur+n;xpEl.textContent=next;
+      bar.style.width=Math.min(100,(next%1000)/10)+'%';showToast('+'+n+' XP');
+    }
+    function showToast(text){const t=document.getElementById('toast');t.textContent=text;t.style.display='block';setTimeout(()=>t.style.display='none',1200);}
+    updateProgress();
+  })();
+  </script>
+</body>
+</html>

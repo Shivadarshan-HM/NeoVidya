@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoVidya – Physical Education</title>
+  <meta name="theme-color" content="#0F4C81" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+      --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+      --bg-dark:#020817; --fg-dark:#E9F2FF; --bg-light:#EAF5FF; --fg-light:#0C1220;
+      --radius-2xl:28px; --shadow-lg:0 12px 32px rgba(7,26,46,.35);
+      --font-display:"Poppins",system-ui; --font-body:"Nunito",system-ui;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font-body);line-height:1.5;min-height:100vh;transition:background .3s,color .3s}
+    body.theme-dark{background:radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%);color:var(--fg-dark)}
+    body.theme-light{background:var(--bg-light);color:var(--fg-light)}
+    .wrap{max-width:1200px;margin:auto;padding:clamp(12px,2.6vw,24px);display:grid;gap:16px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:40px;height:40px;border-radius:10px;background:conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500))}
+    .button{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:0;cursor:pointer;border-radius:12px;font-weight:800;transition:background .2s}
+    .primary{background:linear-gradient(180deg, var(--nv-yellow-500), #D99C00);color:#1A1A1A}
+    .ghost{background:rgba(255,255,255,.06);color:inherit}
+    body.theme-light .ghost{background:#f0f4ff}
+    .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.12)}
+    body.theme-light .pill{background:#eef6ff;color:#0B3A63}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+    .card{border-radius:var(--radius-2xl);box-shadow:var(--shadow-lg);padding:16px;background:rgba(255,255,255,.05);backdrop-filter:blur(6px)}
+    .xpbar{height:10px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}
+    .xpbar>span{display:block;height:100%;background:linear-gradient(90deg,var(--nv-yellow-500),#D99C00)}
+    .lecture{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:14px;background:rgba(255,255,255,.04)}
+    .lecture .thumb{width:52px;height:36px;border-radius:10px;background:#173b5f;display:grid;place-items:center;font-size:18px}
+    .row{display:flex;gap:10px;align-items:center}
+    .spaced{display:flex;align-items:center;justify-content:space-between}
+    .mt-2{margin-top:8px}
+    #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);padding:10px 14px;border-radius:12px;display:none}
+  </style>
+</head>
+<body class="theme-dark">
+  <div class="wrap">
+    <header>
+      <div class="brand"><div class="logo"></div><div><h1>NeoVidya</h1><div class="pill">Physical Education • Grade 6</div></div></div>
+      <div class="row"><span class="pill">Lvl 0</span><span class="pill">XP: <span id="xp">720</span></span><button id="themeToggle" class="button ghost" type="button">🌙 Dark</button><button id="backBtn" class="button ghost" type="button">⬅ Dashboard</button></div>
+    </header>
+
+    <section class="card">
+      <div class="spaced">
+        <h2 style="font-family:var(--font-display)">Your Physical Education Journey</h2>
+        <span class="pill">Streak: 🔥  days</span>
+      </div>
+      <div class="xpbar" style="margin-top:8px"><span id="xpBar" style="width:62%"></span></div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="lectureCard"></div>
+      <div class="card" id="quizCard"></div>
+      <div class="card" id="gameCard"></div>
+      <div class="card" id="notesCard"></div>
+      <div class="card" id="progressCard"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="card">+15 XP</div>
+
+  <script>
+  (function(){
+    // --- Theme toggle ---
+    const themeBtn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('nv-theme') || 'dark';
+    setTheme(saved);
+    themeBtn.addEventListener('click', ()=> setTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark'));
+    function setTheme(mode){
+      document.body.classList.toggle('theme-dark', mode==='dark');
+      document.body.classList.toggle('theme-light', mode==='light');
+      themeBtn.textContent = mode==='dark' ? '🌙 Dark' : '☀ Light';
+      localStorage.setItem('nv-theme', mode);
+    }
+
+    // --- Lectures ---
+    document.getElementById('lectureCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>Lectures</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:10px'>
+        <li class='lecture'><div class='thumb'>🏃</div><div><strong>Warm-Up & Flexibility</strong><div class='pill'>Dynamic vs static stretching</div></div><button class='button primary' data-play='L1' type='button'>▶ Watch</button></li>
+        <li class='lecture'><div class='thumb'>💪</div><div><strong>Components of Fitness</strong><div class='pill'>Strength, endurance, flexibility</div></div><button class='button primary' data-play='L2' type='button'>▶ Watch</button></li>
+        <li class='lecture'><div class='thumb'>🥗</div><div><strong>Basics of Nutrition</strong><div class='pill'>Hydration & balance</div></div><button class='button primary' data-play='L3' type='button'>▶ Watch</button></li>
+      </ul>`;
+
+    // --- Quizzes ---
+    document.getElementById('quizCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>Quizzes</h3>
+      <div class='lecture'><div class='thumb'>🧠</div><div><strong>Fitness Fundamentals</strong><div class='pill'>10 questions • +60 XP</div></div><button class='button primary' data-quiz='fitness' type='button'>Start</button></div>
+      <div class='lecture'><div class='thumb'>🥤</div><div><strong>Health & Nutrition</strong><div class='pill'>8 questions • +50 XP</div></div><button class='button primary' data-quiz='nutrition' type='button'>Start</button></div>`;
+
+    // --- Arcade Game Quiz ---
+    document.getElementById('gameCard').innerHTML = `
+      <div class='spaced'><h3 style='font-family:var(--font-display)'>🎮 Arcade Quiz</h3><span class='pill'>30s Rush</span></div>
+      <div id='arcadeBox' class='mt-2'>
+        <div class='spaced'><strong>Score: <span id='arcScore'>0</span></strong><span class='pill' id='arcTime'>00:30</span></div>
+        <div id='arcQ' class='mt-2'></div>
+        <div id='arcOpts' class='row mt-2' style='flex-wrap:wrap'></div>
+        <div class='row mt-2'><button class='button primary' id='arcStart' type='button'>▶ Start</button><button class='button ghost' id='arcStop' type='button' disabled>⏹ Stop</button></div>
+      </div>`;
+
+    // --- Notes ---
+    document.getElementById('notesCard').innerHTML = `
+      <div class='spaced'><h3 style='font-family:var(--font-display)'>🗒 Offline Notes</h3><span class='pill'>Auto-save</span></div>
+      <textarea id='notesBox' rows='8' style='width:100%;margin-top:8px;border-radius:12px;padding:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:inherit'></textarea>
+      <div class='row mt-2'><button id='saveNotes' class='button primary' type='button'>💾 Save</button><button id='downloadNotes' class='button ghost' type='button'>⬇ Download</button></div>`;
+
+    // --- Progress ---
+    document.getElementById('progressCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>📈 Progress</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:8px'>
+        <li class='row spaced'><span>Lectures</span><strong><span id='pLectDone'>0</span>/<span id='pLectTotal'>3</span></strong></li>
+        <li class='row spaced'><span>Quizzes</span><strong><span id='pQuizDone'>0</span>/<span id='pQuizTotal'>3</span></strong></li>
+        <li class='row spaced'><span>Overall</span><strong><span id='pOverall'>0</span>%</strong></li>
+      </ul>
+      <div class='xpbar'><span id='pBar' style='width:0%'></span></div>`;
+
+    // ---------- State + Persistence ----------
+    const LECT_TOTAL = 3; const QUIZ_TOTAL = 3; // include Arcade as a quiz
+    const LECT_KEY='pe-lectures-completed', QUIZ_KEY='pe-quizzes-completed', NOTES_KEY='pe-notes';
+    let lectSet=new Set(JSON.parse(localStorage.getItem(LECT_KEY)||'[]'));
+    let quizCount=parseInt(localStorage.getItem(QUIZ_KEY)||'0',10);
+
+    function saveLect(){ localStorage.setItem(LECT_KEY, JSON.stringify([...lectSet])); updateProgress(); }
+    function saveQuiz(){ localStorage.setItem(QUIZ_KEY, String(quizCount)); updateProgress(); }
+
+    function updateProgress(){
+      const lectDone = lectSet.size;
+      const quizzesDone = Math.min(quizCount, QUIZ_TOTAL);
+      const overall = Math.round(((lectDone + quizzesDone) / (LECT_TOTAL + QUIZ_TOTAL)) * 100);
+      document.getElementById('pLectDone').textContent = String(lectDone);
+      document.getElementById('pLectTotal').textContent = String(LECT_TOTAL);
+      document.getElementById('pQuizDone').textContent = String(quizzesDone);
+      document.getElementById('pQuizTotal').textContent = String(QUIZ_TOTAL);
+      document.getElementById('pOverall').textContent = String(overall);
+      document.getElementById('pBar').style.width = overall + '%';
+    }
+
+    // Mark lecture complete (award XP once per lecture)
+    document.addEventListener('click',e=>{
+      const t = e.target;
+      if(t && t.matches('[data-play]')){
+        const id = t.getAttribute('data-play');
+        if(!lectSet.has(id)) { addXP(20); showToast('Lecture marked complete'); }
+        lectSet.add(id); saveLect();
+      }
+      if(t && t.matches('[data-quiz]')){
+        const xpTable = { fitness: 60, nutrition: 50 };
+        if(quizCount < QUIZ_TOTAL){ quizCount++; addXP(xpTable[t.getAttribute('data-quiz')] || 40); saveQuiz(); showToast('Quiz completed'); }
+      }
+    });
+
+    // Notes logic
+    const notes=document.getElementById('notesBox');
+    const saveNotesBtn = document.getElementById('saveNotes');
+    const downloadNotesBtn = document.getElementById('downloadNotes');
+    notes.value=localStorage.getItem(NOTES_KEY)||'';
+    saveNotesBtn.onclick=()=>{localStorage.setItem(NOTES_KEY,notes.value);showToast('Notes saved');};
+    notes.addEventListener('input', ()=>{ clearTimeout(window._notesTimer); window._notesTimer=setTimeout(()=>{ localStorage.setItem(NOTES_KEY, notes.value); }, 400); });
+    downloadNotesBtn.onclick=()=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([notes.value||''],{type:'text/plain'}));
+      a.download='physical-education-notes.txt';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    // ---------- Arcade quiz (fitness facts) ----------
+    const FACTS=[
+      {q:'How many minutes of daily activity for kids?',opts:['10','30','60'],a:2},
+      {q:'Best time to stretch static?',opts:['Before warm-up','After warm-up / post-workout','Never'],a:1},
+      {q:'Water per day (approx.)?',opts:['1 cup','2 liters','8 liters'],a:1},
+      {q:'Planks mainly train…',opts:['Core','Calves','Forearms'],a:0},
+      {q:'Heart “aerobic zone” feels like…',opts:['Singing easy','Talking in short sentences','Unable to talk'],a:1},
+    ];
+
+    let arcTick=null, timeLeft=30, score=0;
+    const arcQ=document.getElementById('arcQ'),arcO=document.getElementById('arcOpts'),arcS=document.getElementById('arcScore'),arcT=document.getElementById('arcTime');
+    const startBtn = document.getElementById('arcStart');
+    const stopBtn = document.getElementById('arcStop');
+
+    function nextQ(){
+      const it=FACTS[Math.floor(Math.random()*FACTS.length)];
+      arcQ.textContent=it.q; arcO.innerHTML='';
+      it.opts.forEach((o,i)=>{
+        const b=document.createElement('button'); b.className='button ghost'; b.textContent=o; b.type='button';
+        b.addEventListener('click', ()=>{ if(i===it.a){ score++; arcS.textContent=String(score); addXP(4);} nextQ(); });
+        arcO.appendChild(b);
+      });
+    }
+
+    function startArcade(){
+      score=0; timeLeft=30; arcS.textContent='0'; arcT.textContent='00:30';
+      startBtn.disabled=true; stopBtn.disabled=false; nextQ();
+      if(arcTick) clearInterval(arcTick);
+      arcTick=setInterval(()=>{
+        timeLeft--; arcT.textContent='00:'+String(Math.max(0,timeLeft)).padStart(2,'0');
+        if(timeLeft<=0){ stopArcade(true); }
+      },1000);
+    }
+
+    function stopArcade(auto=false){
+      if(arcTick){ clearInterval(arcTick); arcTick=null; }
+      startBtn.disabled=false; stopBtn.disabled=true;
+      showToast(`Arcade done! Score ${score}`);
+      // count Arcade as a quiz attempt for progress
+      if(auto || score>0){ quizCount=Math.max(quizCount,1); saveQuiz(); }
+    }
+
+    startBtn.addEventListener('click', startArcade);
+    stopBtn.addEventListener('click', ()=> stopArcade(false));
+
+    // Helpers
+    function addXP(n){
+      const xp=document.getElementById('xp');
+      const bar=document.getElementById('xpBar');
+      const cur=parseInt(xp.textContent||'0',10); const next=cur+n; xp.textContent=String(next);
+      bar.style.width=Math.min(100,(next%1000)/10)+'%';
+      showToast('+'+n+' XP');
+    }
+    function showToast(t){
+      const x=document.getElementById('toast'); x.textContent=t; x.style.display='block';
+      clearTimeout(window._toastT); window._toastT=setTimeout(()=>x.style.display='none',1200);
+    }
+
+    updateProgress();
+    document.getElementById('backBtn').addEventListener('click', ()=> history.back());
+  })();
+  </script>
+</body>
+</html>

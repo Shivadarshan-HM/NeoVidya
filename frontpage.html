@@ -4,22 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NeoVidya – Login</title>
-  <meta name="description" content="NeoVidya – playful, offline-friendly gamified learning login page for rural students." />
+  <meta name="description" content="NeoVidya – playful, offline‑friendly gamified learning login page for rural students." />
   <meta name="theme-color" content="#0F4C81" />
   <style>
     /* =====================
        NeoVidya – Design Tokens
        ===================== */
     :root {
-      --nv-blue-900:#0F4C81;
+      /* Playful but not too light */
+      --nv-blue-900:#0F4C81; /* deep sky/navy mix (trust) */
       --nv-blue-700:#0B3A63;
-      --nv-blue-600:#2D9CDB;
-      --nv-yellow-500:#F4B400;
-      --nv-green-600:#27AE60;
-      --nv-coral-500:#FF6B6B;
-      --nv-ink:#0C1220;
-      --nv-paper:#F8F9FB;
-      --nv-card:#0F355A;
+      --nv-blue-600:#2D9CDB; /* active accents */
+      --nv-yellow-500:#F4B400; /* joy */
+      --nv-green-600:#27AE60; /* growth */
+      --nv-coral-500:#FF6B6B; /* energy */
+      --nv-ink:#0C1220;       /* high-contrast text */
+      --nv-paper:#F8F9FB;     /* soft background surfaces */
+      --nv-card:#0F355A;      /* card bg (darkened blue) */
 
       --radius-xl: 18px;
       --radius-2xl: 28px;
@@ -36,24 +37,27 @@
       --font-display: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
       --font-body: "Nunito", system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", "Helvetica Neue", Arial;
 
+      /* Theme surface tokens */
       --fg-light: #0C1220;
       --fg-dark: #E9F2FF;
-      --bg-light: #EAF5FF;
-      --bg-dark: #020817;
+      --bg-light: #EAF5FF;   /* day sky */
+      --bg-dark: #020817;    /* deep night */
     }
 
+    /* Base reset */
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin:0;
-      color: var(--fg-dark);
+      color: var(--fg-dark); /* default to dark look before init */
       background: var(--bg-dark);
       font-family: var(--font-body);
       line-height: 1.5;
       transition: background 600ms ease, color 300ms ease;
-      overflow: hidden;
+      overflow: hidden; /* keep stars inside */
     }
 
+    /* Sky canvas */
     .sky { position: fixed; inset: 0; z-index: -2; }
     .sun { position:absolute; width:220px; height:220px; border-radius:50%; right:7vw; top:7vh; background: radial-gradient(circle at 35% 35%, #fff9d6 0%, #ffe36b 40%, #ffd34a 60%, #ffd34a00 72%); box-shadow: 0 0 80px 30px #ffd34a88, 0 0 200px 60px #ffd34a55; animation: gentle 8s ease-in-out infinite; pointer-events:none; }
     .moon{ position:absolute; width:140px; height:140px; border-radius:50%; right:9vw; top:9vh; background: radial-gradient(circle at 30% 30%, #ffffff, #dfe6ff 60%, #a9b7ff 100%); box-shadow: 0 0 60px 20px #a9b7ff55, 0 0 140px 50px #7f93ff33; animation: gentle 9s ease-in-out infinite; filter: drop-shadow(0 8px 18px #0006); pointer-events:none; display:none; }
@@ -62,23 +66,29 @@
     .stars:before{ width:1px; height:1px; box-shadow: 12vw 12vh #fff, 24vw 6vh #fff, 33vw 18vh #fff, 46vw 12vh #fff, 60vw 6vh #fff, 70vw 22vh #fff, 82vw 16vh #fff, 95vw 10vh #fff, 5vw 18vh #fff, 17vw 26vh #fff, 29vw 32vh #fff, 41vw 28vh #fff, 53vw 36vh #fff, 67vw 30vh #fff, 79vw 26vh #fff, 91vw 34vh #fff, 9vw 50vh #fff, 21vw 46vh #fff, 33vw 54vh #fff, 45vw 48vh #fff, 57vw 52vh #fff, 69vw 46vh #fff, 81vw 58vh #fff, 93vw 50vh #fff, 7vw 76vh #fff, 19vw 70vh #fff, 31vw 82vh #fff, 43vw 74vh #fff, 55vw 86vh #fff, 67vw 78vh #fff, 79vw 90vh #fff, 91vw 82vh #fff; }
     .stars:after{ width:3px; height:3px; box-shadow: 8vw 8vh #fff, 20vw 14vh #fff, 32vw 6vh #fff, 44vw 16vh #fff, 56vw 10vh #fff, 68vw 18vh #fff, 80vw 12vh #fff, 92vw 4vh #fff, 4vw 40vh #fff, 16vw 44vh #fff, 28vw 36vh #fff, 40vw 46vh #fff, 52vw 40vh #fff, 64vw 48vh #fff, 76vw 42vh #fff, 88vw 50vh #fff, 12vw 68vh #fff, 24vw 62vh #fff, 36vw 72vh #fff, 48vw 64vh #fff, 60vw 76vh #fff, 72vw 68vh #fff, 84vw 80vh #fff, 96vw 72vh #fff; }
 
+    /* Day vs Night sky backgrounds */
     .sky.day { background: linear-gradient(180deg, #bde3ff 0%, var(--bg-light) 70%, #ffffff 100%); animation: sunrise 16s ease-in-out infinite alternate; }
     .sky.night { background: radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%); animation: nightPulse 12s ease-in-out infinite alternate; }
 
+    /* Theme toggle button */
     .theme-toggle { position: fixed; right: 18px; top: 18px; z-index: 5; border: 0; cursor: pointer; border-radius: 1000px; padding: 10px 14px; display:inline-flex; align-items:center; gap:10px; background: #ffffffcc; color:#222; backdrop-filter: blur(10px); box-shadow: 0 10px 24px #00000022, inset 0 1px 0 #ffffffcc; font-weight: 700; letter-spacing: .2px; transition: transform .15s ease, background 300ms ease; }
     .theme-toggle:active{ transform: translateY(1px) scale(.99); }
     .theme-toggle svg{ width:20px; height:20px; }
 
+    /* Light theme surface overrides */
     body.theme-light { color: var(--fg-light); }
     body.theme-light .card { color: var(--fg-light); background: #ffffffd9; border-color: rgba(15, 53, 90, .12); }
     body.theme-light .input { color: var(--nv-ink); background: #f5f8ff; border-color: #d7e7ff; }
     body.theme-light .badge { background: rgba(15,76,129,.06); border-color: rgba(15,76,129,.18); color: #0B3A63; }
     body.theme-light .aux a { color: #0F4C81; border-bottom-color: rgba(15,76,129,.35); }
 
+    /* Night theme (default visual style from your original) */
     body.theme-dark { color: var(--fg-dark); }
 
+    /* ========= Original layout & components (mostly unchanged) ========= */
     .wrap { min-height: 100%; display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-6); padding: clamp(16px, 3vw, 32px); position: relative; z-index: 0; }
 
+    /* Left hero */
     .hero { position: relative; border-radius: var(--radius-2xl); overflow: hidden; background:
         radial-gradient(600px 300px at 30% 25%, rgba(39,174,96,.20), transparent 70%),
         linear-gradient(160deg, rgba(13, 80, 138, .75), rgba(9, 48, 84, .85));
@@ -101,6 +111,7 @@
     .eye { animation: blink 5s infinite; transform-origin: center; }
     @keyframes blink { 0%, 92%, 100% { transform: scaleY(1)} 96% { transform: scaleY(.1)} }
 
+    /* Right: Login Card */
     .card { align-self: center; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.12); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg); padding: clamp(18px, 3vw, 32px); backdrop-filter: blur(6px); }
     .brand { display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-5); }
     .logo { width: 40px; height: 40px; border-radius: 10px; background: conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500)); box-shadow: inset 0 0 0 3px rgba(255,255,255,.25), 0 6px 16px rgba(0,0,0,.25); position: relative; }
@@ -134,9 +145,13 @@
     .switch.on { background: var(--nv-green-600) }
     .switch.on .knob { transform: translateX(18px) }
 
+    /* Accessibility: respect reduced motion */
     @media (prefers-reduced-motion: reduce) { .mascot, .ear, .eye, .sun, .moon, .stars { animation: none !important; } }
+
+    /* Small screens */
     @media (max-width: 980px) { .wrap { grid-template-columns: 1fr; } .hero { order: 2; } .card { order: 1; } }
 
+    /* Sky Animations */
     @keyframes sunrise { 0% { background: linear-gradient(180deg, #76c8ff 0%, #bde3ff 40%, #ffffff 85%); } 100% { background: linear-gradient(180deg, #ffd1a1 0%, #ffe7c2 40%, #ffffff 85%); } }
     @keyframes nightPulse { 0%{ filter: brightness(1); } 100%{ filter: brightness(1.15); } }
     @keyframes twinkle { from { opacity: .65; transform: translateY(0px);} to { opacity: 1; transform: translateY(-1px);} }
@@ -150,7 +165,7 @@
   <div class="moon" aria-hidden="true"></div>
   <div class="stars" aria-hidden="true"></div>
 
-  <!-- Theme toggle -->
+  <!-- Theme toggle (accessible) -->
   <button id="themeToggle" class="theme-toggle" aria-pressed="false" aria-label="Toggle dark mode">
     <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     <svg id="iconMoon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -158,25 +173,41 @@
   </button>
 
   <div class="wrap" role="main">
-    <!-- Left: Hero -->
+    <!-- Left: Playful Hero with Badges and Mascot -->
     <section class="hero" aria-label="NeoVidya playful welcome">
       <div class="badge-row" aria-hidden="true">
-        <div class="badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.9l1.1-6.5L2.6 8.8l6.5-.9L12 2z"/></svg> Level Up</div>
-        <div class="badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C7 2 3 6 3 11c0 6 5 10 9 10s9-4 9-10C21 6 17 2 12 2zm-.5 15c-2.8 0-5-2.2-5-5 0-1.1.3-2.1.9-3 1.7 1.2 3.3 2.3 4.9 3.5 1.3.9 2.6 1.9 3.9 2.8-.9 1.1-2.3 1.7-3.7 1.7z"/></svg> Grow Skills</div>
-        <div class="badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l7 3v6c0 5-3.7 9.8-7 11-3.3-1.2-7-6-7-11V5l7-3z"/></svg> Safe Space</div>
+        <div class="badge">
+          <!-- Star badge -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.9l1.1-6.5L2.6 8.8l6.5-.9L12 2z"/></svg>
+          Level Up
+        </div>
+        <div class="badge">
+          <!-- Leaf badge -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C7 2 3 6 3 11c0 6 5 10 9 10s9-4 9-10C21 6 17 2 12 2zm-.5 15c-2.8 0-5-2.2-5-5 0-1.1.3-2.1.9-3 1.7 1.2 3.3 2.3 4.9 3.5 1.3.9 2.6 1.9 3.9 2.8-.9 1.1-2.3 1.7-3.7 1.7z"/></svg>
+          Grow Skills
+        </div>
+        <div class="badge">
+          <!-- Shield badge -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l7 3v6c0 5-3.7 9.8-7 11-3.3-1.2-7-6-7-11V5l7-3z"/></svg>
+          Safe Space
+        </div>
       </div>
 
       <div class="hero-copy">
         <h2 class="title">Welcome to NeoVidya</h2>
         <p class="subtitle">Learn with joy, level up your knowledge, and watch your progress tree grow — even offline.</p>
 
-        <!-- Mascot -->
+        <!-- Cute Animal Mascot: Playful Panda (more detailed & cute) -->
         <svg class="mascot" viewBox="0 0 320 260" role="img" aria-label="Playful panda mascot chewing bamboo">
           <defs>
             <radialGradient id="pandaFur" cx="50%" cy="35%" r="70%">
               <stop offset="0%" stop-color="#FFFFFF"/>
               <stop offset="100%" stop-color="#EDEDED"/>
             </radialGradient>
+            <linearGradient id="pandaShadow" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#A0A0A0"/>
+              <stop offset="100%" stop-color="#6B6B6B"/>
+            </linearGradient>
             <linearGradient id="bambooGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#A6E17B"/>
               <stop offset="100%" stop-color="#3BAE5B"/>
@@ -186,35 +217,68 @@
               <stop offset="100%" stop-color="#2DAE56"/>
             </linearGradient>
           </defs>
+
+          <!-- Ground shadow -->
           <ellipse cx="160" cy="235" rx="90" ry="14" fill="#000" opacity=".22"/>
+
+          <!-- Body -->
           <ellipse cx="150" cy="165" rx="82" ry="62" fill="url(#pandaFur)"/>
+          <!-- Arms (black) hugging belly -->
           <ellipse cx="105" cy="165" rx="32" ry="26" fill="#1C1C1C"/>
           <ellipse cx="195" cy="165" rx="32" ry="26" fill="#1C1C1C"/>
+
+          <!-- Head group -->
           <g transform="translate(95,60)">
-            <g class="ear"><circle cx="18" cy="18" r="18" fill="#1C1C1C"/><circle cx="118" cy="16" r="18" fill="#1C1C1C"/></g>
+            <!-- Ears -->
+            <g class="ear">
+              <circle cx="18" cy="18" r="18" fill="#1C1C1C"/>
+              <circle cx="118" cy="16" r="18" fill="#1C1C1C"/>
+            </g>
+            <!-- Head -->
             <circle cx="68" cy="56" r="56" fill="url(#pandaFur)"/>
+            <!-- Eye patches -->
             <ellipse cx="48" cy="56" rx="16" ry="20" fill="#1C1C1C"/>
             <ellipse cx="88" cy="56" rx="16" ry="20" fill="#1C1C1C"/>
-            <g class="eye"><circle cx="48" cy="58" r="6" fill="#0C1220"/><circle cx="88" cy="58" r="6" fill="#0C1220"/></g>
-            <circle cx="46" cy="56" r="2" fill="#fff"/><circle cx="86" cy="56" r="2" fill="#fff"/>
+            <!-- Eyes -->
+            <g class="eye">
+              <circle cx="48" cy="58" r="6" fill="#0C1220"/>
+              <circle cx="88" cy="58" r="6" fill="#0C1220"/>
+            </g>
+            <!-- Eye sparkle -->
+            <circle cx="46" cy="56" r="2" fill="#fff"/>
+            <circle cx="86" cy="56" r="2" fill="#fff"/>
+            <!-- Nose + mouth -->
             <ellipse cx="68" cy="72" rx="8" ry="6" fill="#1C1C1C"/>
             <path d="M60 78q8 8 16 0" stroke="#1C1C1C" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <circle cx="36" cy="74" r="6" fill="#FF9DB2" opacity=".9"/><circle cx="100" cy="74" r="6" fill="#FF9DB2" opacity=".9"/>
+            <!-- Cheeks -->
+            <circle cx="36" cy="74" r="6" fill="#FF9DB2" opacity=".9"/>
+            <circle cx="100" cy="74" r="6" fill="#FF9DB2" opacity=".9"/>
           </g>
+
+          <!-- Legs (black) -->
           <ellipse cx="115" cy="210" rx="24" ry="20" fill="#1C1C1C"/>
           <ellipse cx="185" cy="210" rx="24" ry="20" fill="#1C1C1C"/>
+
+          <!-- Bamboo (animated chew) -->
           <g transform="translate(170,150)">
             <g class="bamboo" style="transform-origin: 0px 0px; animation: chew 1.8s ease-in-out infinite;">
               <rect x="0" y="-6" width="80" height="12" rx="6" fill="url(#bambooGrad)"/>
               <rect x="24" y="-7" width="2" height="14" fill="#2E8B57" opacity=".6"/>
               <rect x="48" y="-7" width="2" height="14" fill="#2E8B57" opacity=".6"/>
+              <!-- Leaves -->
               <path d="M12 -14 C 20 -18, 30 -16, 36 -8 C 28 -8, 20 -10, 12 -14" fill="url(#bambooLeaf)"/>
               <path d="M8 10 C 18 14, 28 16, 36 10 C 26 10, 18 8, 8 10" fill="url(#bambooLeaf)"/>
             </g>
           </g>
+
+          <!-- Floating decorative stars/hearts for extra cuteness -->
           <g class="floatBits" opacity=".95">
-            <g transform="translate(36,32)"><polygon points="10,0 13,7 20,8 14,13 15,20 10,16 5,20 6,13 0,8 7,7" fill="#FFD36E"/></g>
-            <g transform="translate(270,70)"><path d="M12 21s-7-4.6-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.4-7 10-7 10z" fill="#FF7A90"/></g>
+            <g transform="translate(36,32)">
+              <polygon points="10,0 13,7 20,8 14,13 15,20 10,16 5,20 6,13 0,8 7,7" fill="#FFD36E"/>
+            </g>
+            <g transform="translate(270,70)">
+              <path d="M12 21s-7-4.6-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.4-7 10-7 10z" fill="#FF7A90"/>
+            </g>
           </g>
         </svg>
         <style>
@@ -236,8 +300,8 @@
 
       <form id="loginForm" novalidate>
         <div class="field">
-          <label for="username">Username (email)</label>
-          <input class="input" id="username" name="username" type="email" autocomplete="username" placeholder="Enter your email" required />
+          <label for="username">Username</label>
+          <input class="input" id="username" name="username" type="text" inputmode="text" autocomplete="username" placeholder="Enter your username" required />
         </div>
         <div class="field">
           <label for="password">Password</label>
@@ -245,7 +309,10 @@
         </div>
 
         <button class="btn" type="submit" aria-label="Sign in and start learning">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="color:#1A1A1A"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>
+          <!-- small spark icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="color:#1A1A1A">
+            <path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" />
+          </svg>
           Start Your Adventure
         </button>
 
@@ -266,25 +333,30 @@
         </div>
 
         <div class="meta-row" aria-label="Highlights">
-          <span class="chip">Offline-friendly</span>
-          <span class="chip">Low-end devices</span>
+          <span class="chip">Offline‑friendly</span>
+          <span class="chip">Low‑end devices</span>
           <span class="chip">Local languages</span>
         </div>
       </form>
     </section>
   </div>
 
-  <!-- UI + Audio + Theme + (no auth here) -->
+  <!-- WebAudio + Theme Toggle scripts -->
   <script>
     (function(){
       const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // THEME TOGGLE
-      const body = document.body, sky = document.getElementById('sky');
+      // --------- THEME TOGGLE ---------
+      const body = document.body;
+      const sky = document.getElementById('sky');
       const btn = document.getElementById('themeToggle');
-      const iconSun = document.getElementById('iconSun'), iconMoon = document.getElementById('iconMoon'), label = document.getElementById('toggleLabel');
+      const iconSun = document.getElementById('iconSun');
+      const iconMoon = document.getElementById('iconMoon');
+      const label = document.getElementById('toggleLabel');
+
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const saved = localStorage.getItem('nv-theme');
+
       function setTheme(mode){
         const dark = mode === 'dark';
         body.classList.toggle('theme-dark', dark);
@@ -293,6 +365,7 @@
         sky.classList.toggle('day', !dark);
         document.querySelector('.sun').style.display = dark ? 'none' : 'block';
         document.querySelector('.moon').style.display = dark ? 'block' : 'none';
+        const stars = document.querySelectorAll('.stars, .stars:before, .stars:after');
         document.querySelector('.stars').style.display = dark ? 'block' : 'none';
         btn.setAttribute('aria-pressed', String(dark));
         iconSun.style.display = dark ? 'none' : 'block';
@@ -300,29 +373,50 @@
         label.textContent = dark ? 'Dark' : 'Light';
         localStorage.setItem('nv-theme', mode);
       }
+
       setTheme(saved ? saved : (prefersDark ? 'dark' : 'light'));
       btn.addEventListener('click', ()=> setTheme(body.classList.contains('theme-dark') ? 'light' : 'dark'));
 
-      // UI helpers + audio
+      // --------- Tiny utility UI helpers (from your original)
       const qs = (s, r=document) => r.querySelector(s);
       const musicSwitch = qs('#musicToggle .switch');
       const sfxSwitch = qs('#sfxToggle .switch');
       const form = qs('#loginForm');
 
-      function toggleSwitch(el){ const on = !el.classList.contains('on'); el.classList.toggle('on', on); el.setAttribute('aria-checked', String(on)); return on; }
+      function toggleSwitch(el){
+        const on = !el.classList.contains('on');
+        el.classList.toggle('on', on);
+        el.setAttribute('aria-checked', String(on));
+        return on;
+      }
 
+      // --------- Gamified micro SFX (no files)
       let audioCtx; let melodyTimer;
       function makeCtx(){ if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
       function beep(freq=880, time=0.08, type='sine', gain=.06){ if(!sfxSwitch.classList.contains('on')) return; const ctx = makeCtx(); const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = type; o.frequency.value = freq; g.gain.value = gain; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + time); }
       function successJingle(){ const notes = [523,659,784]; notes.forEach((f,i)=> setTimeout(()=>beep(f, .12, 'triangle', .05), i*90)); }
       function startMelody(){ if(!musicSwitch.classList.contains('on')) return; const ctx = makeCtx(); const scale = [261.6,293.7,329.6,392.0,440.0,392.0,329.6,293.7]; let i = 0; clearInterval(melodyTimer); melodyTimer = setInterval(()=>{ const n = scale[i++ % scale.length]; const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = 'square'; o.frequency.value = n; g.gain.value = .015; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.18); }, 240); }
       function stopMelody(){ clearInterval(melodyTimer); }
+
+      // --------- Wire up switches
       musicSwitch.addEventListener('click', ()=>{ const on = toggleSwitch(musicSwitch); if(on){ startMelody(); } else { stopMelody(); } beep(on?660:440, .05, 'sine', .03); });
       sfxSwitch.addEventListener('click', ()=>{ const on = toggleSwitch(sfxSwitch); beep(on?700:350, .05, 'sine', .03); });
-      [musicSwitch, sfxSwitch].forEach(sw=>{ sw.tabIndex=0; sw.addEventListener('keydown', (e)=>{ if(e.key===' '|| e.key==='Enter'){ e.preventDefault(); sw.click(); }}); });
+      ;[musicSwitch, sfxSwitch].forEach(sw=>{ sw.tabIndex=0; sw.addEventListener('keydown', (e)=>{ if(e.key===' '|| e.key==='Enter'){ e.preventDefault(); sw.click(); }}); });
 
-      // Confetti stars
-      window.burstStars = function(anchor){
+      // --------- Form interactions
+      const username = qs('#username'); const password = qs('#password');
+      [username, password].forEach(input=>{ input.addEventListener('focus', ()=> beep(660, .06, 'sine', .025)); });
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const u = username.value.trim(); const p = password.value.trim();
+        if(!u || !p){ beep(220, .12, 'sawtooth', .05); alert('Please fill in both Username and Password.'); return; }
+        successJingle();
+        burstStars(e.submitter || qs('.btn'));
+        setTimeout(()=>{ alert('Logged in! (Demo) — Imagine this routes to your gamified dashboard with levels & badges.'); }, 300);
+      });
+
+      // Confetti stars (pure DOM, low‑cost)
+      function burstStars(anchor){
         const rect = anchor.getBoundingClientRect();
         const cx = rect.left + rect.width/2; const cy = rect.top + window.scrollY + rect.height/2;
         for(let i=0;i<14;i++){
@@ -336,96 +430,18 @@
           const ang = Math.random()*Math.PI*2; const dist = 60 + Math.random()*40; const tx = Math.cos(ang)*dist; const ty = Math.sin(ang)*dist;
           s.animate([
             { transform: 'translate(-50%, -50%)', opacity: 1 },
-            { transform: translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)), opacity: 0 }
+            { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px))`, opacity: 0 }
           ], { duration: 600 + Math.random()*300, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = ()=> s.remove();
         }
-      };
+      }
 
+      // Start melody only after user gesture
       document.addEventListener('click', onceStart, { capture: true, once: true });
       function onceStart(){ if(musicSwitch.classList.contains('on')) startMelody(); }
 
+      // Defaults: music OFF, sfx ON. Respect reduced motion
       if(prefersReduced){ sfxSwitch.classList.remove('on'); sfxSwitch.setAttribute('aria-checked','false'); }
     })();
-  </script>
-
-  <!-- 🔐 Firebase Auth + Firestore (CDN) + Login flow -->
-  <script type="module">
-    // Firebase SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-
-    // 🔑 PASTE YOUR PROJECT CONFIG HERE
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
-    console.log("✅ Firebase initialized:", app.name);
-
-    // Ensure user profile doc exists
-    async function ensureUserDoc(user){
-      const ref = doc(db, "users", user.uid);
-      const snap = await getDoc(ref);
-      if(!snap.exists()){
-        await setDoc(ref, {
-          name: user.displayName || (user.email ? user.email.split("@")[0] : "Student"),
-          role: "student",
-          lang: "hi",
-          createdAt: Date.now()
-        }, { merge: true });
-        console.log("🆕 user profile created");
-      } else {
-        console.log("✅ user profile exists");
-      }
-    }
-
-    // Handle form submit → Firebase login
-    const form = document.getElementById("loginForm");
-    form.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const email = document.getElementById("username").value.trim();
-      const pass  = document.getElementById("password").value.trim();
-      if(!email || !pass){ alert("Please fill in both Username and Password."); return; }
-
-      try {
-        const { user } = await signInWithEmailAndPassword(auth, email, pass);
-
-        // Success UI
-        if(window.burstStars){ window.burstStars(e.submitter || document.querySelector(".btn")); }
-        (function successJingle(){ const ctx = new (window.AudioContext||window.webkitAudioContext)(); [523,659,784].forEach((f,i)=>{ const o=ctx.createOscillator(); const g=ctx.createGain(); o.type='triangle'; o.frequency.value=f; g.gain.value=.05; o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i*0.09); o.stop(ctx.currentTime + i*0.09 + .12); }); })();
-        alert("🎉 Login success ho gaya! Welcome to NeoVidya 😄");
-
-        // Backend profile ensure
-        await ensureUserDoc(user);
-
-        // (Optional) fetch profile for log
-        const uSnap = await getDoc(doc(db, "users", user.uid));
-        console.log("👤 User data:", uSnap.data());
-
-        // Redirect to dashboard
-        window.location.replace("neovidyadashboard.html");
-
-      } catch (err) {
-        alert("❌ " + err.message);
-        console.error(err);
-      }
-    });
-
-    // Already logged-in users → auto-redirect
-    onAuthStateChanged(auth, (user)=>{
-      if(user){
-        console.log("🔐 Already signed in:", user.uid);
-        // window.location.replace("neovidyadashboard.html"); // enable if you want auto-redirect
-      }
-    });
   </script>
 </body>
 </html>

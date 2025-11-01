@@ -330,13 +330,10 @@
             <div class="switch on" role="switch" aria-checked="true" aria-label="Sound effects toggle"><span class="knob"></span></div>
             SFX
           </label>
-        </div>
+        
 
-        <div class="meta-row" aria-label="Highlights">
-          <span class="chip">Offline‑friendly</span>
-          <span class="chip">Low‑end devices</span>
-          <span class="chip">Local languages</span>
-        </div>
+        
+        
       </form>
     </section>
   </div>
@@ -412,7 +409,8 @@
         if(!u || !p){ beep(220, .12, 'sawtooth', .05); alert('Please fill in both Username and Password.'); return; }
         successJingle();
         burstStars(e.submitter || qs('.btn'));
-        setTimeout(()=>{ alert('Logged in! (Demo) — Imagine this routes to your gamified dashboard with levels & badges.'); }, 300);
+        window.top.location.replace("neovidyadashboard.html");
+
       });
 
       // Confetti stars (pure DOM, low‑cost)
