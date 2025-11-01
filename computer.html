@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoVidya – Computer Science</title>
+  <meta name="theme-color" content="#0F4C81" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+      --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+      --bg-dark:#020817; --fg-dark:#E9F2FF; --bg-light:#EAF5FF; --fg-light:#0C1220;
+      --radius-2xl:28px; --shadow-lg:0 12px 32px rgba(7,26,46,.35);
+      --font-display:"Poppins",system-ui; --font-body:"Nunito",system-ui;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font-body);line-height:1.5;min-height:100svh;transition:background .3s,color .3s}
+    body.theme-dark{background:radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%);color:var(--fg-dark)}
+    body.theme-light{background:var(--bg-light);color:var(--fg-light)}
+    .wrap{max-width:1200px;margin:auto;padding:clamp(12px,2.6vw,24px);display:grid;gap:16px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:40px;height:40px;border-radius:10px;background:conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500))}
+    h1{font-family:var(--font-display);font-size:22px}
+    .button{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:0;cursor:pointer;border-radius:12px;font-weight:800;transition:background .2s}
+    .primary{background:linear-gradient(180deg, var(--nv-yellow-500), #D99C00);color:#1A1A1A}
+    .ghost{background:rgba(255,255,255,.06);color:inherit}
+    body.theme-light .ghost{background:#f0f4ff}
+    .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.12)}
+    body.theme-light .pill{background:#eef6ff;color:#0B3A63}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+    .card{border-radius:var(--radius-2xl);box-shadow:var(--shadow-lg);padding:16px;background:rgba(255,255,255,.05);backdrop-filter:blur(6px)}
+    body.theme-light .card{background:#fff}
+    .xpbar{height:10px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}
+    .xpbar>span{display:block;height:100%;background:linear-gradient(90deg,var(--nv-yellow-500),#D99C00)}
+    .lecture{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:14px;background:rgba(255,255,255,.04)}
+    .lecture .thumb{width:52px;height:36px;border-radius:10px;background:#173b5f;display:grid;place-items:center;font-size:18px}
+    .row{display:flex;gap:10px;align-items:center}
+    .spaced{display:flex;align-items:center;justify-content:space-between}
+    #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);padding:10px 14px;border-radius:12px;display:none;background:rgba(0,0,0,.6);color:#fff}
+  </style>
+</head>
+<body class="theme-dark">
+  <div class="wrap">
+    <header>
+      <div class="brand"><div class="logo" aria-hidden="true"></div><div><h1>NeoVidya</h1><div class="pill">Computer Science • Grade 6</div></div></div>
+      <div class="row"><span class="pill">Lvl 7</span><span class="pill">XP: <span id="xp">720</span></span><button id="themeToggle" class="button ghost" aria-label="Toggle theme" aria-pressed="false">🌙 Dark</button><a id="backBtn" class="button ghost" href="index.html" aria-label="Back to dashboard">⬅ Dashboard</a></div>
+    </header>
+
+    <section class="card">
+      <div class="spaced">
+        <h2 style="font-family:var(--font-display)">Your Computer Science Journey</h2>
+        <span class="pill">Streak: 🔥 6 days</span>
+      </div>
+      <div class="xpbar" style="margin-top:8px"><span id="xpBar" style="width:62%"></span></div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="lectureCard"></div>
+      <div class="card" id="quizCard"></div>
+      <div class="card" id="gameCard"></div>
+      <div class="card" id="notesCard"></div>
+      <div class="card" id="progressCard"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="card" role="status" aria-live="polite">+15 XP</div>
+
+  <script>
+  (function(){
+    // ---------- Theme toggle ----------
+    const themeBtn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('nv-theme') || 'dark';
+    setTheme(saved);
+    themeBtn.addEventListener('click', ()=> setTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark'));
+    function setTheme(mode){
+      const dark = mode==='dark';
+      document.body.classList.toggle('theme-dark', dark);
+      document.body.classList.toggle('theme-light', !dark);
+      themeBtn.textContent = dark ? '🌙 Dark' : '☀ Light';
+      themeBtn.setAttribute('aria-pressed', String(dark));
+      localStorage.setItem('nv-theme', mode);
+    }
+
+    // ---------- Static sections ----------
+    document.getElementById('lectureCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>Lectures</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:10px'>
+        <li class='lecture'><div class='thumb'>💾</div><div><strong>Introduction to Computers</strong><div class='pill'>What is a computer?</div></div><button class='button primary' data-play='L1' type='button'>▶ Watch</button></li>
+        <li class='lecture'><div class='thumb'>💻</div><div><strong>Hardware & Software</strong><div class='pill'>Understanding components</div></div><button class='button primary' data-play='L2' type='button'>▶ Watch</button></li>
+        <li class='lecture'><div class='thumb'>🌐</div><div><strong>Internet Basics</strong><div class='pill'>How the web works</div></div><button class='button primary' data-play='L3' type='button'>▶ Watch</button></li>
+      </ul>`;
+
+    document.getElementById('quizCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>Quizzes</h3>
+      <div class='lecture'><div class='thumb'>🧠</div><div><strong>Know Your Computer</strong><div class='pill'>10 questions • +60 XP</div></div><button class='button primary' data-quiz='basics' type='button'>Start</button></div>
+      <div class='lecture'><div class='thumb'>🔐</div><div><strong>Online Safety</strong><div class='pill'>8 questions • +50 XP</div></div><button class='button primary' data-quiz='safety' type='button'>Start</button></div>`;
+
+    document.getElementById('gameCard').innerHTML = `
+      <div class='spaced'><h3 style='font-family:var(--font-display)'>🎮 Arcade Quiz</h3><span class='pill'>30s Rush</span></div>
+      <div id='arcadeBox'>
+        <div class='spaced'><strong>Score: <span id='arcScore'>0</span></strong><span class='pill' id='arcTime'>00:30</span></div>
+        <div id='arcQ' style='margin-top:10px'></div>
+        <div id='arcOpts' class='row' style='flex-wrap:wrap'></div>
+        <div class='row'><button class='button primary' id='arcStart' type='button'>▶ Start</button><button class='button ghost' id='arcStop' type='button' disabled>⏹ Stop</button></div>
+      </div>`;
+
+    document.getElementById('notesCard').innerHTML = `
+      <div class='spaced'><h3 style='font-family:var(--font-display)'>🗒 Offline Notes</h3><span class='pill'>Auto-save</span></div>
+      <textarea id='notesBox' rows='8' style='width:100%;margin-top:8px;border-radius:12px;padding:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:inherit'></textarea>
+      <div class='row'><button id='saveNotes' class='button primary' type='button'>💾 Save</button><button id='downloadNotes' class='button ghost' type='button'>⬇ Download</button></div>`;
+
+    document.getElementById('progressCard').innerHTML = `
+      <h3 style='font-family:var(--font-display)'>📈 Progress</h3>
+      <ul style='list-style:none;padding:0;margin:10px 0;display:grid;gap:8px'>
+        <li class='row spaced'><span>Lectures</span><strong><span id='pLectDone'>0</span>/3</strong></li>
+        <li class='row spaced'><span>Quizzes</span><strong><span id='pQuizDone'>0</span>/3</strong></li>
+        <li class='row spaced'><span>Overall</span><strong><span id='pOverall'>0</span>%</strong></li>
+      </ul>
+      <div class='xpbar'><span id='pBar' style='width:0%'></span></div>`;
+
+    // ---------- State + Persistence ----------
+    const LECT_KEY='cs-lectures-completed', QUIZ_KEY='cs-quizzes-completed', NOTES_KEY='cs-notes';
+    let lectSet=new Set(JSON.parse(localStorage.getItem(LECT_KEY)||'[]'));
+    let quizCount=parseInt(localStorage.getItem(QUIZ_KEY)||'0',10);
+
+    // Sync XP with profile (uses nv-xp there)
+    const xpEl = document.getElementById('xp');
+    const xpBar = document.getElementById('xpBar');
+    const storedXp = parseInt(localStorage.getItem('nv-xp')||xpEl.textContent||'0',10);
+    xpEl.textContent = isNaN(storedXp)? 0 : storedXp;
+    xpBar.style.width = Math.min(100, (storedXp%1000)/10) + '%';
+
+    function updateProgress(){
+      const overall=Math.round(((lectSet.size+Math.min(quizCount,3))/6)*100);
+      document.getElementById('pLectDone').textContent=lectSet.size;
+      document.getElementById('pQuizDone').textContent=Math.min(quizCount,3);
+      document.getElementById('pOverall').textContent=overall;
+      document.getElementById('pBar').style.width=overall+'%';
+      // Disable lecture buttons already completed
+      document.querySelectorAll('[data-play]').forEach(btn=>{
+        const id = btn.getAttribute('data-play');
+        const done = lectSet.has(id);
+        btn.disabled = done;
+        btn.textContent = done ? '✓ Watched' : '▶ Watch';
+        btn.classList.toggle('ghost', done);
+        btn.classList.toggle('primary', !done);
+      });
+      // Disable quizzes when counted
+      const qBtns = document.querySelectorAll('[data-quiz]');
+      qBtns.forEach((btn, idx)=>{
+        const done = quizCount > idx; // simplistic: first btn then second, arcade makes it 3rd
+        btn.disabled = done;
+        btn.textContent = done ? '✓ Completed' : 'Start';
+        btn.classList.toggle('ghost', done);
+        btn.classList.toggle('primary', !done);
+      });
+    }
+
+    // Award XP and persist
+    function addXP(n){
+      let cur=parseInt(xpEl.textContent)||0; cur+=n;
+      xpEl.textContent=cur;
+      xpBar.style.width=Math.min(100,(cur%1000)/10)+'%';
+      localStorage.setItem('nv-xp', String(cur));
+      showToast('+'+n+' XP');
+    }
+
+    // ---------- Interactions ----------
+    document.addEventListener('click',e=>{
+      // lectures
+      const playBtn = e.target.closest('[data-play]');
+      if(playBtn){
+        const id = playBtn.getAttribute('data-play');
+        if(!lectSet.has(id)){
+          lectSet.add(id);
+          localStorage.setItem(LECT_KEY,JSON.stringify([...lectSet]));
+          addXP(20);
+          updateProgress();
+        }
+        e.preventDefault();
+        return;
+      }
+      // quizzes (simulate completion now; replace with real navigation later)
+      const quizBtn = e.target.closest('[data-quiz]');
+      if(quizBtn){
+        const which = quizBtn.getAttribute('data-quiz');
+        // TODO: navigate to quiz page if exists
+        // window.location.href = `${which}.html`;
+        quizCount = Math.min(3, quizCount + 1);
+        localStorage.setItem(QUIZ_KEY, String(quizCount));
+        addXP(which === 'basics' ? 60 : 50);
+        updateProgress();
+        e.preventDefault();
+        return;
+      }
+    });
+
+    // ---------- Notes logic ----------
+    const notes=document.getElementById('notesBox');
+    notes.value=localStorage.getItem(NOTES_KEY)||'';
+    document.getElementById('saveNotes').onclick=()=>{localStorage.setItem(NOTES_KEY,notes.value);showToast('Notes saved');};
+    document.getElementById('downloadNotes').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([notes.value],{type:'text/plain'}));a.download='computer-science-notes.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),0);};
+
+    // ---------- Arcade quiz ----------
+    const FACTS=[
+      {q:'CPU stands for?',opts:['Central Process Unit','Central Processing Unit','Computer Power Unit'],a:1},
+      {q:'Which is an input device?',opts:['Printer','Keyboard','Monitor'],a:1},
+      {q:'Shortcut for paste?',opts:['Ctrl+V','Ctrl+C','Ctrl+X'],a:0},
+      {q:'RAM is?',opts:['Read Access Memory','Random Access Memory','Rapid Active Memory'],a:1}
+    ];
+    let score=0,time=30,timer;const arcQ=document.getElementById('arcQ'),arcO=document.getElementById('arcOpts'),arcS=document.getElementById('arcScore'),arcT=document.getElementById('arcTime');
+    function nextQ(){const it=FACTS[Math.floor(Math.random()*FACTS.length)];arcQ.textContent=it.q;arcO.innerHTML='';it.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='button ghost';b.type='button';b.textContent=o;b.onclick=()=>{if(i===it.a){score++;arcS.textContent=score;addXP(4);}nextQ();};arcO.appendChild(b);});}
+    document.getElementById('arcStart').onclick=()=>{score=0;time=30;arcS.textContent='0';arcT.textContent='00:30';document.getElementById('arcStart').disabled=true;document.getElementById('arcStop').disabled=false;nextQ();timer=setInterval(()=>{time--;arcT.textContent='00:'+String(Math.max(0,time)).padStart(2,'0');if(time<=0)stop(true);},1000);};
+    function stop(auto=false){clearInterval(timer);document.getElementById('arcStart').disabled=false;document.getElementById('arcStop').disabled=true;showToast('Arcade done! Score '+score);if(auto||score>0){quizCount=Math.max(quizCount,3);localStorage.setItem(QUIZ_KEY,String(quizCount));updateProgress();}}
+    document.getElementById('arcStop').onclick=()=>stop(false);
+
+    // ---------- Helpers ----------
+    function showToast(t){const x=document.getElementById('toast');x.textContent=t;x.style.display='block';clearTimeout(showToast._t);showToast._t=setTimeout(()=>x.style.display='none',1200);}
+
+    // init
+    updateProgress();
+  })();
+  </script>
+</body>
+</html>
