@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoVidya – Dashboard</title>
+  <meta name="description" content="NeoVidya – playful, offline-friendly gamified learning dashboard for rural students." />
+  <meta name="theme-color" content="#0F4C81" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --nv-blue-900:#0F4C81; --nv-blue-700:#0B3A63; --nv-blue-600:#2D9CDB;
+      --nv-yellow-500:#F4B400; --nv-green-600:#27AE60; --nv-coral-500:#FF6B6B;
+      --nv-ink:#0C1220; --nv-paper:#F8F9FB; --nv-card:#0F355A;
+      --radius-lg:16px; --radius-xl:22px; --radius-2xl:28px;
+      --shadow-lg:0 12px 32px rgba(7,26,46,.35); --shadow-md:0 8px 22px rgba(7,26,46,.25); --shadow-sm:0 6px 16px rgba(7,26,46,.2);
+      --space-1:.5rem; --space-2:.75rem; --space-3:1rem; --space-4:1.25rem; --space-5:1.75rem; --space-6:2.25rem;
+      --font-display:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans","Helvetica Neue",Arial;
+      --font-body:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans","Helvetica Neue",Arial;
+      --fg-light:#0C1220; --fg-dark:#E9F2FF; --bg-light:#EAF5FF; --bg-dark:#020817;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;color:var(--fg-dark);
+      background: radial-gradient(1200px 600px at 50% 120%, #00122a, var(--bg-dark) 60%);
+      font-family:var(--font-body); line-height:1.5;
+      overflow-x:hidden; overflow-y:auto; min-height:100dvh;
+    }
+    body.theme-light{color:var(--fg-light); background:var(--bg-light)}
+    .glass{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(6px)}
+    body.theme-light .glass{background:rgba(255,255,255,.92); border-color:rgba(15,53,90,.12)}
+
+    .app{display:grid; grid-template-columns:260px 1fr; min-height:100svh; gap:20px; padding:clamp(12px,2.6vw,24px)}
+    @media (max-width:1024px){ .app{grid-template-columns:1fr; padding:12px; gap:14px} .sidebar{order:2} }
+
+    .sidebar{position:sticky; top:16px; align-self:start; border-radius:var(--radius-2xl); box-shadow:var(--shadow-lg); padding:16px}
+    .brand{display:flex; align-items:center; gap:10px; margin-bottom:14px}
+    .logo{width:40px; height:40px; border-radius:10px; background:conic-gradient(from 210deg, var(--nv-yellow-500), var(--nv-green-600), var(--nv-blue-600), var(--nv-yellow-500)); box-shadow:inset 0 0 0 3px rgba(255,255,255,.25), 0 6px 16px rgba(0,0,0,.25); position:relative}
+    .logo::after{content:""; position:absolute; inset:6px; border-radius:8px; background:rgba(255,255,255,.25)}
+    .brand h1{font-family:var(--font-display); font-size:20px; margin:0}
+    .brand span{font-size:12px; opacity:.85}
+
+    .profile{display:flex; align-items:center; gap:12px; padding:10px; border-radius:var(--radius-lg)}
+    .avatar{width:48px; height:48px; border-radius:12px; background:linear-gradient(180deg,#9fd0ff,#7fb3ff); box-shadow:inset 0 0 0 3px rgba(255,255,255,.25); position:relative; overflow:hidden}
+    .avatar::after{content:"🎓"; position:absolute; inset:0; display:grid; place-items:center; font-size:26px}
+
+    .level-row{display:flex; gap:8px; font-size:12px; margin-top:6px}
+    .xpbar{height:10px; background:rgba(255,255,255,.2); border-radius:999px; overflow:hidden}
+    .xpbar>span{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--nv-yellow-500),#D99C00)}
+
+    .menu{margin-top:10px; display:grid; gap:6px}
+    .menu a{display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:12px; text-decoration:none; color:inherit; font-weight:700; letter-spacing:.2px}
+    .menu a:hover{background:rgba(255,255,255,.08)}
+    body.theme-light .menu a:hover{background:#eef6ff}
+
+    .badges{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px}
+    .chip{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); border-radius:999px; padding:6px 10px; font-size:12px}
+    body.theme-light .chip{background:#eef6ff; border-color:#d7e7ff; color:#0B3A63}
+
+    .main{display:grid; grid-template-rows:auto 1fr; gap:18px}
+    .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .search{flex:1; display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:14px}
+    .search input{flex:1; background:transparent; border:0; color:inherit; outline:none; font-size:14px}
+
+    .top-actions{display:flex; gap:10px; align-items:center}
+    .button{display:inline-flex; align-items:center; gap:10px; padding:10px 12px; border:0; cursor:pointer; border-radius:12px; font-weight:800; letter-spacing:.3px; text-decoration:none}
+    .button.primary{background:linear-gradient(180deg,var(--nv-yellow-500),#D99C00); color:#1A1A1A; box-shadow:var(--shadow-sm)}
+    .button.ghost{background:rgba(255,255,255,.06); color:inherit}
+    body.theme-light .button.ghost{background:#f2f7ff}
+
+    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:18px}
+    @media (max-width:1200px){ .grid{grid-template-columns:1fr} }
+    .card{border-radius:var(--radius-2xl); box-shadow:var(--shadow-lg); padding:16px}
+
+    .subjects{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px}
+    .subject{position:relative; border-radius:18px; padding:14px; overflow:hidden; min-height:140px; display:flex; flex-direction:column; justify-content:space-between; isolation:isolate}
+    .subject h3{margin:6px 0 2px; font-family:var(--font-display); font-size:18px}
+    .subject small{opacity:.9}
+    .subject .progress{height:8px; background:rgba(255,255,255,.2); border-radius:999px; overflow:hidden; margin-top:10px}
+    .subject .progress>span{display:block; height:100%}
+    .subject .cta{display:flex; gap:8px}
+    .subject .corner{position:absolute; right:-32px; top:-32px; width:120px; height:120px; border-radius:50%; opacity:.16; filter:blur(1px)}
+
+    .rail{display:grid; gap:18px}
+    .leaderboard li{display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px dashed rgba(255,255,255,.12)}
+    .leaderboard li:last-child{border-bottom:0}
+    .quest{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; padding:10px; border-radius:14px}
+
+    .theme-toggle{border:0; cursor:pointer; border-radius:1000px; padding:10px 12px; display:inline-flex; align-items:center; gap:10px; background:#ffffffcc; color:#222; backdrop-filter:blur(10px); box-shadow:0 10px 24px #00000022, inset 0 1px 0 #ffffffcc; font-weight:800; letter-spacing:.2px}
+
+    .muted{opacity:.85} .row{display:flex; gap:10px; align-items:center} .spaced{display:flex; align-items:center; justify-content:space-between}
+    .mt-2{margin-top:8px} .mt-3{margin-top:12px} .mt-4{margin-top:16px}
+    @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
+  </style>
+</head>
+<body class="theme-dark">
+  <!-- Auth guard: ONLY redirect if not logged in -->
+  <script>
+    if (localStorage.getItem('nv-auth') !== '1') {
+      window.location.replace('dash1.html');
+    }
+  </script>
+
+  <!-- Friendly greeting -->
+  <p id="welcome" style="font-size:22px; font-weight:700; margin:16px; color:white;"></p>
+
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar glass" aria-label="Sidebar">
+      <div class="brand" aria-label="NeoVidya brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>NeoVidya</h1>
+          <span>Play • Learn • Grow</span>
+        </div>
+      </div>
+
+      <div class="profile glass" aria-label="Learner profile">
+        <div class="avatar" aria-hidden="true"></div>
+        <div>
+          <strong id="hiName">Hi!</strong>
+          <div class="level-row">
+            <span class="pill" id="lvlPill">Lvl</span>
+            <span class="pill" id="xpPill">0 XP</span>
+          </div>
+          <div class="xpbar mt-2" aria-label="XP progress to next level">
+            <span id="xpBar" style="width:0%"></span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Main menu">
+        <a href="profile.html" class="row"><span>🎓</span><span>Profile</span></a>
+        <a href="neovidyadashboard.html" id="neovidyadashboard" class="row">
+          <span>🏠</span><span>Dashboard</span>
+        </a>
+        <a href="courses.html" class="row"><span>🗂️</span><span>Courses</span></a>
+        <a href="setting.html" class="row"><span>⚙️</span><span>Settings</span></a>
+      </nav>
+
+      <div class="badges" aria-label="Unlocked badges">
+        <span class="chip">🌱 Starter</span>
+        <span class="chip">📚 Bookworm</span>
+        <span class="chip">🧠 Quiz Master</span>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main" role="main">
+      <div class="topbar">
+        <div class="search glass" role="search">
+          🔎 <input id="search" type="search" placeholder="Search lessons, teachers, or topics…" aria-label="Search" />
+        </div>
+        <div class="top-actions">
+          <button id="toggleTheme" class="theme-toggle" aria-pressed="true" aria-label="Toggle dark mode">🌙 <span id="themeLabel">Dark</span></button>
+          <button class="button ghost" id="langBtn" aria-haspopup="listbox">🌐 भाषा</button>
+          <button class="button primary" id="continueBtn">▶️ Continue lesson</button>
+          <button class="button ghost" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+
+      <section class="grid" aria-label="Dashboard content">
+        <!-- LEFT: Subjects + Activity -->
+        <div class="column">
+          <!-- Subjects -->
+          <section class="card glass" aria-label="Subjects">
+            <div class="spaced">
+              <h2 style="margin:0;font-family:var(--font-display)">Your Subjects</h2>
+              <div class="row muted"><span class="chip" id="streakChip">Streak: 🔥 0 days</span><span class="chip" id="todayXpChip">Today: +0 XP</span></div>
+            </div>
+
+            <div class="subjects mt-3" id="subjectsGrid">
+              <!-- Mathematics -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(39,174,96,.18), transparent 70%);" aria-label="Mathematics">
+                <div>
+                  <div class="row"><span style="font-size:22px">➗</span><span class="pill">Quest +0 XP</span></div>
+                  <h3>Mathematics</h3>
+                  <small class="muted">Foundations • Fractions • Algebra</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #A6E17B, #3BAE5B)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="mathsdashboard.html" data-subject="math">Continue</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#27AE60"></div>
+              </article>
+
+              <!-- Science -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(45,156,219,.18), transparent 70%);" aria-label="Science">
+                <div>
+                  <div class="row"><span style="font-size:22px">🧪</span><span class="pill">New! Solar system</span></div>
+                  <h3>Science</h3>
+                  <small class="muted">Plants • Energy • Space</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #76c8ff, #2D9CDB)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="science.html" data-subject="science">Continue</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#2D9CDB"></div>
+              </article>
+
+              <!-- Social Studies -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(244,180,0,.18), transparent 70%);" aria-label="Social Studies">
+                <div>
+                  <div class="row"><span style="font-size:22px">🌍</span><span class="pill">Map Challenge</span></div>
+                  <h3>Social Studies</h3>
+                  <small class="muted">India • World • Civics</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #ffd36e, #F4B400)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="social.html" data-subject="sst">Continue</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#F4B400"></div>
+              </article>
+
+              <!-- English -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(255,107,107,.16), transparent 70%);" aria-label="English">
+                <div>
+                  <div class="row"><span style="font-size:22px">📖</span><span class="pill">Story XP +0</span></div>
+                  <h3>English</h3>
+                  <small class="muted">Reading • Grammar • Vocabulary</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #ffb3b3, #FF6B6B)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="english.html" data-subject="english">Continue</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#FF6B6B"></div>
+              </article>
+
+              <!-- Hindi -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(15,76,129,.18), transparent 70%);" aria-label="Hindi">
+                <div>
+                  <div class="row"><span style="font-size:22px">📝</span><span class="pill">वर्णमाला</span></div>
+                  <h3>Hindi</h3>
+                  <small class="muted">वाचन • व्याकरण • शब्दावली</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #9bc2ff, #0F4C81)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="hindi.html" data-subject="hindi">जारी रखें</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#0F4C81"></div>
+              </article>
+
+              <!-- Computer Basics -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(171, 92, 255,.16), transparent 70%);" aria-label="Computer Basics">
+                <div>
+                  <div class="row"><span style="font-size:22px">💻</span><span class="pill">Typing Sprint</span></div>
+                  <h3>Computer Basics</h3>
+                  <small class="muted">Keyboard • Paint • Safety</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #d0b7ff, #ab5cff)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="computer.html" data-subject="it">Continue</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#ab5cff"></div>
+              </article>
+
+              <!-- Art Education -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(107, 255, 161, 0.16), transparent 70%);" aria-label="Art Education">
+                <div>
+                  <div class="row"><span style="font-size:22px">🎨</span><span class="pill">Daily doodle</span></div>
+                  <h3>Art Education</h3>
+                  <small class="muted">Colors • Shapes • Craft</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #b3ffbc, #75ff6b)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="art.html" data-subject="art">Continue</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#6bff6b"></div>
+              </article>
+
+              <!-- Physical Education -->
+              <article class="subject glass" style="background: radial-gradient(600px 300px at 0% 0%, rgba(255, 66, 195, 0.523), transparent 70%);" aria-label="Physical Education">
+                <div>
+                  <div class="row"><span style="font-size:22px">🏃‍♂️</span><span class="pill">Exercise</span></div>
+                  <h3>Physical Education</h3>
+                  <small class="muted">Fitness • Games • Health</small>
+                </div>
+                <div>
+                  <div class="progress"><span style="width:0%; background: linear-gradient(90deg, #ffb3e2, #ff6bba)"></span></div>
+                  <div class="cta mt-2">
+                    <a class="button primary" href="pe.html" data-subject="pe">Continue</a>
+                  </div>
+                </div>
+                <div class="corner" style="background:#ff6bd8"></div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Activity Feed -->
+          <section class="card glass mt-3" aria-label="Recent activity">
+            <h2 style="margin:0;font-family:var(--font-display)">Recent Activity</h2>
+            <ul class="mt-2" style="list-style:none; padding:0; margin:0">
+              <li class="row spaced" style="padding:8px 0; border-bottom:1px dashed rgba(255,255,255,.12)"><span>📘 Finished "Fractions – Part 2"</span><span class="chip">+30 XP</span></li>
+              <li class="row spaced" style="padding:8px 0; border-bottom:1px dashed rgba(255,255,255,.12)"><span>🧪 Attempted "Plants Quiz"</span><span class="chip">+15 XP</span></li>
+              <li class="row spaced" style="padding:8px 0"><span>🌍 New badge unlocked: Map Explorer</span><span class="chip">🏅</span></li>
+            </ul>
+          </section>
+        </div>
+
+        <!-- RIGHT RAIL -->
+        <aside class="rail">
+          <section class="card glass" aria-label="Daily quests">
+            <div class="spaced">
+              <h2 style="margin:0;font-family:var(--font-display)">Daily Quests</h2>
+              <span class="chip" id="resetChip">Reset in 12h</span>
+            </div>
+            <div class="mt-3" style="display:grid; gap:10px">
+              <div class="quest glass"><div><strong>Complete 3 Math practices</strong><span class="muted">+40 XP • +1 Gem</span></div><button class="button primary" data-quest="q1">Start</button></div>
+              <div class="quest glass"><div><strong>Score 80% in any quiz</strong><span class="muted">+60 XP</span></div><button class="button ghost" data-quest="q2">Try</button></div>
+            </div>
+          </section>
+
+          <section class="card glass" aria-label="Leaderboard">
+            <h2 style="margin:0;font-family:var(--font-display)">This Week's Leaders</h2>
+            <ol class="leaderboard mt-2" style="padding-left:18px; margin:0">
+              <li><span>1. Priya</span><span class="chip">2,180 XP</span></li>
+              <li><span>2. You</span><span class="chip">1,950 XP</span></li>
+              <li><span>3. Ravi</span><span class="chip">1,640 XP</span></li>
+              <li><span>4. Meena</span><span class="chip">1,440 XP</span></li>
+            </ol>
+          </section>
+
+          <section class="card glass" aria-label="Offline content">
+            <div class="spaced">
+              <h2 style="margin:0;font-family:var(--font-display)">Offline Pack</h2>
+              <span class="chip" id="netStatus">Online</span>
+            </div>
+            <div class="row mt-2">
+              <select id="packSelect" class="button ghost" aria-label="Select subject to download">
+                <option value="math">Mathematics – Grade 6</option>
+                <option value="science">Science – Grade 6</option>
+                <option value="english">English – Grade 6</option>
+              </select>
+              <button id="downloadBtn" class="button primary">⬇️ Download</button>
+            </div>
+            <small class="muted">Low-end device mode: optimized images, compressed audio.</small>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    (function(){
+      // Theme
+      const body = document.body;
+      const themeBtn = document.getElementById('toggleTheme');
+      const themeLabel = document.getElementById('themeLabel');
+      const saved = localStorage.getItem('nv-theme');
+      function setTheme(mode){
+        const dark = mode === 'dark';
+        body.classList.toggle('theme-dark', dark);
+        body.classList.toggle('theme-light', !dark);
+        themeBtn.setAttribute('aria-pressed', String(dark));
+        themeLabel.textContent = dark ? 'Dark' : 'Light';
+        localStorage.setItem('nv-theme', mode);
+      }
+      setTheme(saved ? saved : 'dark');
+      themeBtn.addEventListener('click', ()=> setTheme(body.classList.contains('theme-dark') ? 'light' : 'dark'));
+
+      // Tiny SFX
+      let audioCtx;
+      function ctx(){ if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+      function beep(freq=880, time=0.09, type='sine', gain=.05){
+        const c = ctx(); const o = c.createOscillator(); const g = c.createGain();
+        o.type=type; o.frequency.value=freq; g.gain.value=gain; o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + time);
+      }
+      function success(){ [523,659,784].forEach((f,i)=> setTimeout(()=>beep(f,.12,'triangle',.04), i*100)); }
+      document.addEventListener('click', ()=> ctx(), { once:true, capture:true });
+
+      // Play success sound on primary subject clicks (links will still navigate)
+      document.querySelectorAll('.subject .button.primary').forEach(btn=>{
+        btn.addEventListener('click', ()=> success());
+      });
+
+      // Language toggle (demo)
+      const langBtn = document.getElementById('langBtn');
+      let lang = localStorage.getItem('nv-lang') || 'en';
+      function setLang(next){ lang = next; localStorage.setItem('nv-lang', lang); langBtn.textContent = lang==='hi' ? '🌐 English' : '🌐 भाषा'; }
+      setLang(lang);
+      langBtn.addEventListener('click', ()=> setLang(lang==='hi'?'en':'hi'));
+
+      // Offline indicator
+      const net = document.getElementById('netStatus');
+      function setNet(){ net.textContent = navigator.onLine ? 'Online' : 'Offline'; net.classList.toggle('chip'); }
+      setNet(); window.addEventListener('online', setNet); window.addEventListener('offline', setNet);
+
+      // Fake download
+      document.getElementById('downloadBtn').addEventListener('click', ()=>{ success(); alert('Preparing lightweight offline pack… (Demo)'); });
+
+      // Continue top button (demo)
+      document.getElementById('continueBtn').addEventListener('click', ()=>{ success(); alert('Resuming your last lesson… (Demo)'); });
+
+      // Stay on Dashboard if already here
+      (function(){
+        const dash = document.getElementById('neovidyadashboard');
+        if (!dash) return;
+        const current = location.pathname.split('/').pop() || 'index.html';
+        const target = dash.getAttribute('href');
+        if (current === target) {
+          dash.setAttribute('aria-current','page');
+          dash.addEventListener('click', e => e.preventDefault());
+        }
+      })();
+
+      // ====== NEW: welcome + sidebar name + logout ======
+      const user = JSON.parse(localStorage.getItem('nv-user') || 'null');
+      // welcome text (top)
+      const welcomeEl = document.getElementById('welcome');
+      const displayName = (user && (user.name || user.username || user.email)) || 'Student';
+      if (welcomeEl) welcomeEl.textContent = `Welcome back, ${displayName}!`;
+
+      // sidebar "Hi, ..."
+      const hiName = document.getElementById('hiName');
+      if (hiName) hiName.textContent = `Hi, ${displayName}!`;
+
+      // simple demo stats
+      document.getElementById('xpPill').textContent = (user && user.xp ? `${user.xp} XP` : '0 XP');
+
+      // logout
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('nv-auth');
+        localStorage.removeItem('nv-user');
+        window.location.replace('dash1.html');
+      });
+      // ================================================
+    })();
+  </script>
+
+  <!-- (Optional) Live Server reload script that VS Code injects locally -->
+  <!-- Safe to keep; it won't load in production -->
+  <!-- Code injected by live-server -->
+  <script>
+    // <![CDATA[
+    if ('WebSocket' in window) {
+      (function () {
+        function refreshCSS() {
+          var sheets = [].slice.call(document.getElementsByTagName("link"));
+          var head = document.getElementsByTagName("head")[0];
+          for (var i = 0; i < sheets.length; ++i) {
+            var elem = sheets[i];
+            var parent = elem.parentElement || head;
+            parent.removeChild(elem);
+            var rel = elem.rel;
+            if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+              var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+              elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+            }
+            parent.appendChild(elem);
+          }
+        }
+        var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+        var address = protocol + window.location.host + window.location.pathname + '/ws';
+        var socket = new WebSocket(address);
+        socket.onmessage = function (msg) {
+          if (msg.data == 'reload') window.location.reload();
+          else if (msg.data == 'refreshcss') refreshCSS();
+        };
+        if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+          console.log('Live reload enabled.');
+          sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+        }
+      })();
+    }
+    // ]]>
+  </script>
+</body>
+</html>
