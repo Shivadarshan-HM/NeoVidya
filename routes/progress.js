@@ -3,6 +3,28 @@ const { db } = require('../database');
 
 const router = express.Router();
 
+function titleFromSubject(subject) {
+  if (!subject) return 'Course';
+  return subject.charAt(0).toUpperCase() + subject.slice(1);
+}
+
+function getOrCreateCourseId(subject, cb) {
+  db.get(`SELECT id FROM courses WHERE subject = ? LIMIT 1`, [subject], (err, row) => {
+    if (err) return cb(err);
+    if (row?.id) return cb(null, row.id);
+
+    const title = titleFromSubject(subject);
+    db.run(
+      `INSERT INTO courses (title, subject, description) VALUES (?, ?, ?)`
+      , [title, subject, `${title} course`],
+      function (insertErr) {
+        if (insertErr) return cb(insertErr);
+        cb(null, this.lastID);
+      }
+    );
+  });
+}
+
 // Middleware to authenticate token (simplified - should be imported from auth)
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -65,41 +87,47 @@ router.post('/:subject/:chapter/:item', authenticateToken, (req, res) => {
     return res.status(400).json({ error: 'Invalid chapter or item index' });
   }
 
-  // Check if progress already exists
-  db.get(`
-    SELECT id FROM progress
-    WHERE user_id = ? AND subject_key = ? AND chapter_index = ? AND item_index = ?
-  `, [userId, subject, chapterIndex, itemIndex], (err, existing) => {
-    if (err) {
+  getOrCreateCourseId(subject, (courseErr, courseId) => {
+    if (courseErr) {
       return res.status(500).json({ error: 'Database error' });
     }
 
-    const now = new Date().toISOString();
+    // Check if progress already exists
+    db.get(`
+      SELECT id FROM progress
+      WHERE user_id = ? AND subject_key = ? AND chapter_index = ? AND item_index = ?
+    `, [userId, subject, chapterIndex, itemIndex], (err, existing) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
 
-    if (existing) {
-      // Update existing progress
-      db.run(`
-        UPDATE progress
-        SET completed = ?, score = ?, completed_at = ?
-        WHERE user_id = ? AND subject_key = ? AND chapter_index = ? AND item_index = ?
-      `, [completed ? 1 : 0, score || 0, completed ? now : null, userId, subject, chapterIndex, itemIndex], function(err) {
-        if (err) {
-          return res.status(500).json({ error: 'Failed to update progress' });
-        }
-        res.json({ message: 'Progress updated' });
-      });
-    } else {
-      // Insert new progress
-      db.run(`
-        INSERT INTO progress (user_id, subject_key, chapter_index, item_index, completed, score, completed_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [userId, subject, chapterIndex, itemIndex, completed ? 1 : 0, score || 0, completed ? now : null], function(err) {
-        if (err) {
-          return res.status(500).json({ error: 'Failed to save progress' });
-        }
-        res.json({ message: 'Progress saved' });
-      });
-    }
+      const now = new Date().toISOString();
+
+      if (existing) {
+        // Update existing progress
+        db.run(`
+          UPDATE progress
+          SET completed = ?, score = ?, completed_at = ?, course_id = ?
+          WHERE user_id = ? AND subject_key = ? AND chapter_index = ? AND item_index = ?
+        `, [completed ? 1 : 0, score || 0, completed ? now : null, courseId, userId, subject, chapterIndex, itemIndex], function(err) {
+          if (err) {
+            return res.status(500).json({ error: 'Failed to update progress' });
+          }
+          res.json({ message: 'Progress updated' });
+        });
+      } else {
+        // Insert new progress
+        db.run(`
+          INSERT INTO progress (user_id, course_id, subject_key, chapter_index, item_index, completed, score, completed_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [userId, courseId, subject, chapterIndex, itemIndex, completed ? 1 : 0, score || 0, completed ? now : null], function(err) {
+          if (err) {
+            return res.status(500).json({ error: 'Failed to save progress' });
+          }
+          res.json({ message: 'Progress saved' });
+        });
+      }
+    });
   });
 });
 

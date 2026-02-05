@@ -63,6 +63,9 @@ async function initDatabase() {
       password TEXT NOT NULL,
       role TEXT DEFAULT 'student',
       school_id INTEGER,
+      xp INTEGER DEFAULT 0,
+      streak INTEGER DEFAULT 0,
+      last_active DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (school_id) REFERENCES schools(id)
@@ -87,13 +90,42 @@ async function initDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
       course_id INTEGER NOT NULL,
+      subject_key TEXT,
+      chapter_index INTEGER,
+      item_index INTEGER,
       score INTEGER DEFAULT 0,
       completed INTEGER DEFAULT 0 CHECK (completed IN (0,1)),
       last_accessed DATETIME DEFAULT CURRENT_TIMESTAMP,
+      completed_at DATETIME,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
       FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
     );
   `);
+
+  // ---- Schema migrations for existing DBs ----
+  async function ensureColumns(table, columns) {
+    const info = await all(`PRAGMA table_info(${table});`);
+    const existing = new Set(info.map((c) => c.name));
+    for (const col of columns) {
+      if (!existing.has(col.name)) {
+        await run(`ALTER TABLE ${table} ADD COLUMN ${col.name} ${col.type};`);
+        console.log(`🧩 Added column ${table}.${col.name}`);
+      }
+    }
+  }
+
+  await ensureColumns('users', [
+    { name: 'xp', type: 'INTEGER DEFAULT 0' },
+    { name: 'streak', type: 'INTEGER DEFAULT 0' },
+    { name: 'last_active', type: 'DATETIME' }
+  ]);
+
+  await ensureColumns('progress', [
+    { name: 'subject_key', type: 'TEXT' },
+    { name: 'chapter_index', type: 'INTEGER' },
+    { name: 'item_index', type: 'INTEGER' },
+    { name: 'completed_at', type: 'DATETIME' }
+  ]);
 
   // Triggers: keep updated_at fresh on users
   await run(`
@@ -109,6 +141,7 @@ async function initDatabase() {
   await run(`CREATE INDEX IF NOT EXISTS idx_users_school ON users(school_id);`);
   await run(`CREATE INDEX IF NOT EXISTS idx_progress_user ON progress(user_id);`);
   await run(`CREATE INDEX IF NOT EXISTS idx_progress_course ON progress(course_id);`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_progress_subject ON progress(subject_key);`);
 
   console.log('🛠️  Database tables, triggers, and indexes are ready.');
 }
@@ -165,14 +198,13 @@ module.exports = {
   run, get, all,     // promise-based helpers
   initDatabase,
   seedSchoolRegistry,
+  seedDemoUser,
   healthCheck,
   closeDatabase,
   dbPath
 };
 // ---- Temporary test user (for login demo) ----
-
-
-(async () => {
+async function seedDemoUser() {
   try {
     const exists = await get(`SELECT id FROM users WHERE username=?`, ['demo']).catch(() => null);
     if (!exists) {
@@ -187,4 +219,4 @@ module.exports = {
   } catch (e) {
     console.error('Test user seed error:', e.message);
   }
-})();
+}

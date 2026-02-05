@@ -342,8 +342,12 @@
       payload.email = u;
     }
 
+    const apiBase = (location.protocol === 'file:' || location.port === '5500')
+      ? 'http://localhost:3000'
+      : '';
+
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${apiBase}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -361,11 +365,14 @@
         // Go to dashboard
         window.location.href = 'neovidyadashboard.html';
       } else {
-        alert((data && (data.error || data.message)) || 'Invalid username or password.');
+        const fallback = res.status === 404
+          ? 'Login API not found. Make sure the backend is running on http://localhost:3000.'
+          : 'Invalid username or password.';
+        alert((data && (data.error || data.message)) || fallback);
       }
     } catch (err) {
       console.error(err);
-      alert('Server error. Please try again later.');
+      alert('Server error. Make sure the backend is running on http://localhost:3000.');
     }
   });
 

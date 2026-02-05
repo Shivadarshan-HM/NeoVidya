@@ -11,6 +11,7 @@ const {
   dbPath,
   initDatabase,
   seedSchoolRegistry,
+  seedDemoUser,
   healthCheck
 } = require('./database');
 
@@ -104,6 +105,7 @@ async function start() {
     console.log('SQLite file:', dbPath);
     await initDatabase();          // ensures PRAGMAs, tables, triggers, indexes
     await seedSchoolRegistry();    // safe to run repeatedly
+    await seedDemoUser();          // safe to run repeatedly
 
     // Mount API routes **after** DB is ready to avoid "no such table" on first hits
     app.use('/api/auth', authRoutes);
